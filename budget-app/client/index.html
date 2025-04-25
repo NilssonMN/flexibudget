@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="app-title"></title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1 id="app-header"></h1>
+
+    <!-- Currency Selector -->
+    <section class="currency-section">
+      <label for="currency" id="currency-label"></label>
+      <select id="currency" onchange="updateCurrency()">
+        <option value="USD" id="currency-usd"></option>
+        <option value="EUR" id="currency-eur"></option>
+        <option value="SEK" id="currency-sek"></option>
+      </select>
+    </section>
+
+    <!-- Budget Template Selector -->
+    <section class="template-section">
+      <label for="budget-template" id="template-label"></label>
+      <select id="budget-template" onchange="updateTemplate()">
+        <option value="50/30/20" id="template-50-30-20"></option>
+        <option value="70/20/10" id="template-70-20-10"></option>
+      </select>
+    </section>
+
+    <!-- Income Input -->
+    <section class="income-section">
+      <label for="income" id="income-label"></label>
+      <input type="number" id="income" step="0.01">
+    </section>
+    <div id="income-display"></div>
+
+    <!-- Expense Form -->
+    <form id="expense-form">
+      <input type="number" id="amount" required step="0.01">
+      <select id="category" required>
+        <option value="Fixed Monthly Costs" id="category-fixed-monthly-costs"></option>
+        <option value="Variable Expenses" id="category-variable-expenses"></option>
+        <option value="Savings" id="category-savings"></option>
+      </select>
+      <input type="text" id="description">
+      <button type="submit" id="expense-button"></button>
+    </form>
+
+    <!-- Budget Overview -->
+    <section id="budget-overview">
+      <h2 id="budget-header"></h2>
+      <div id="fixed-monthly-costs"></div>
+      <div id="variable-expenses"></div>
+      <div id="savings"></div>
+      <div id="remaining-income"></div>
+    </section>
+
+    <!-- Save Snapshot -->
+    <section id="save-snapshot">
+      <h2 id="save-snapshot-header"></h2>
+      <input type="text" id="snapshot-name" placeholder="Budget Name">
+      <button id="save-snapshot-button"></button>
+    </section>
+
+    <!-- Snapshot List -->
+    <section id="snapshot-list">
+      <h2 id="snapshot-list-header"></h2>
+      <div id="snapshot-table"></div>
+    </section>
+
+    <!-- Expense List -->
+    <section id="expense-list">
+      <h2 id="expenses-header"></h2>
+      <table id="expense-table">
+        <thead>
+          <tr>
+            <th id="table-amount"></th>
+            <th id="table-category"></th>
+            <th id="table-description"></th>
+            <th id="table-action"></th>
+          </tr>
+        </thead>
+        <tbody id="expense-table-body"></tbody>
+      </table>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

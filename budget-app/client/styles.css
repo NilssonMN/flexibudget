@@ -1,0 +1,180 @@
+body {
+  font-family: 'Georgia', serif;
+  margin: 0;
+  padding: 0;
+  background-color: black;
+  color: #2E2E2E;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 30px;
+  background-color: #3C2F2F;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #F7E7CE;
+}
+
+h1, h2 {
+  text-align: center;
+  color: white;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 20px;
+}
+
+.currency-section, .template-section, .income-section, #expense-form, #save-snapshot {
+  margin: 25px 0;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#income-display {
+  margin: 15px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #D4A017;
+}
+
+input, select, button {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #5C4033;
+  border-radius: 6px;
+  background-color: #F7E7CE;
+  color: #2E2E2E;
+  font-family: 'Georgia', serif;
+}
+
+input[type="number"], select, #snapshot-name {
+  width: 220px;
+}
+
+input[type="text"] {
+  flex: 1;
+}
+
+button {
+  background-color: #355E3B;
+  color: #F7E7CE;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2A4B2F;
+}
+
+.delete-btn, .load-btn, .delete-snapshot-btn {
+  background-color: #8B3A3A;
+  padding: 5px 10px;
+}
+
+.delete-btn:hover, .load-btn:hover, .delete-snapshot-btn:hover {
+  background-color: #722F2F;
+}
+
+.load-btn {
+  background-color: #A89F68;
+}
+
+.load-btn:hover {
+  background-color: #8B8A5A;
+}
+
+#budget-overview {
+  margin: 25px 0;
+}
+
+#budget-overview div {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #F7E7CE;
+  line-height: 1.4;
+  white-space: normal;
+}
+
+#remaining-income {
+  margin: 5px 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #D4A017;
+}
+
+#remaining-income.warning {
+  color: #A44A4A;
+}
+
+#save-snapshot, #snapshot-list {
+  margin: 25px 0;
+}
+
+#snapshot-table {
+  width: 100%;
+  margin-top: 15px;
+  background-color: #4A3728;
+  border-collapse: collapse;
+}
+
+#snapshot-table div {
+  border: 1px solid #5C4033;
+  padding: 10px;
+  text-align: left;
+  color: #F7E7CE;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background-color: #4A3728;
+}
+
+th, td {
+  border: 1px solid #5C4033;
+  padding: 10px;
+  text-align: left;
+  color: #F7E7CE;
+}
+
+th {
+  background-color: #A89F68;
+  font-weight: bold;
+}
+
+.warning {
+  color: #A44A4A;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 15px;
+    padding: 20px;
+  }
+
+  .currency-section, .template-section, .income-section, #expense-form, #save-snapshot {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  input, select, button, #snapshot-name {
+    width: 100%;
+  }
+
+  #income-display, #budget-overview div, #remaining-income {
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  th {
+    min-width: 80px;
+  }
+
+  table, #snapshot-table {
+    font-size: 14px;
+  }
+}
