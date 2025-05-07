@@ -10,8 +10,8 @@ const user = 'Nilsson';
 // Translations
 const translations = {
   en: {
-    appTitle: 'Budget calculator',
-    appHeader: 'Budget calculator',
+    appTitle: '50/30/20 Budget App',
+    appHeader: '50/30/20 Budget App',
     currencyLabel: 'Currency',
     currencyUSD: 'Dollars ($)',
     currencyEUR: 'Euro (€)',
@@ -19,6 +19,7 @@ const translations = {
     templateLabel: 'Budget Template',
     template50_30_20: '50/30/20 (Needs/Wants/Savings)',
     template70_20_10: '70/20/10 (Needs/Savings/Wants)',
+    templateFree: 'Free Allocation',
     incomeLabel: 'Monthly Income',
     incomePlaceholder: 'Enter your income',
     incomeDisplay: 'Current Income',
@@ -63,8 +64,8 @@ const translations = {
     overBudget: 'Over budget'
   },
   sv: {
-    appTitle: 'Budget kalkylator',
-    appHeader: 'Budget kalkylator',
+    appTitle: '50/30/20 Budgetapp',
+    appHeader: '50/30/20 Budgetapp',
     currencyLabel: 'Valuta',
     currencyUSD: 'Dollar ($)',
     currencyEUR: 'Euro (€)',
@@ -72,6 +73,7 @@ const translations = {
     templateLabel: 'Budgetmall',
     template50_30_20: '50/30/20 (Behov/Nöjen/Sparande)',
     template70_20_10: '70/20/10 (Behov/Sparande/Nöjen)',
+    templateFree: 'Fri Fördelning',
     incomeLabel: 'Månadsinkomst',
     incomePlaceholder: 'Ange din inkomst',
     incomeDisplay: 'Aktuell Inkomst',
@@ -161,6 +163,7 @@ function updateLanguage() {
   document.getElementById('template-label').innerText = translate('templateLabel');
   document.getElementById('template-50-30-20').innerText = translate('template50_30_20');
   document.getElementById('template-70-20-10').innerText = translate('template70_20_10');
+  document.getElementById('template-free').innerText = translate('templateFree');
   document.getElementById('income-label').innerText = translate('incomeLabel');
   document.getElementById('income').placeholder = translate('incomePlaceholder');
   document.getElementById('amount').placeholder = translate('amountPlaceholder');
@@ -524,34 +527,60 @@ function updateBudgetOverview() {
     .filter((exp) => exp.category === 'Savings')
     .reduce((sum, exp) => sum + exp.amount, 0);
 
-  // Calculate budget targets based on template
-  const targets = template === '50/30/20' ?
-    { fixed: income * 0.5, variable: income * 0.3, savings: income * 0.2 } :
-    { fixed: income * 0.7, variable: income * 0.1, savings: income * 0.2 };
-
-  // Calculate overspending
-  const fixedExcess = fixedTotal > targets.fixed ? fixedTotal - targets.fixed : 0;
-  const variableExcess = variableTotal > targets.variable ? variableTotal - targets.variable : 0;
-  const savingsExcess = savingsTotal > targets.savings ? savingsTotal - targets.savings : 0;
-
-  // Build display with warning
-  const fixedDisplay = `${translate('fixedMonthlyCosts')}: ${formatCurrency(fixedTotal)} (${fixedTotal} ${translate('of')} ${formatCurrency(targets.fixed)})${fixedExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(fixedExcess)}` : ''}`;
-  const variableDisplay = `${translate('variableExpenses')}: ${formatCurrency(variableTotal)} (${variableTotal} ${translate('of')} ${formatCurrency(targets.variable)})${variableExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(variableExcess)}` : ''}`;
-  const savingsDisplay = `${translate('savings')}: ${formatCurrency(savingsTotal)} (${savingsTotal} ${translate('of')} ${formatCurrency(targets.savings)})${savingsExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(savingsExcess)}` : ''}`;
-
-  document.getElementById('fixed-monthly-costs').innerHTML = fixedDisplay;
-  document.getElementById('variable-expenses').innerHTML = variableDisplay;
-  document.getElementById('savings').innerHTML = savingsDisplay;
-
-  // Calculate total expenses and remaining income
   const totalExpenses = fixedTotal + variableTotal + savingsTotal;
   const remainingIncome = income - totalExpenses;
 
-  // Display remaining income or deficit
-  const remainingDisplay = remainingIncome >= 0
-    ? `${translate('remainingIncome')}: ${formatCurrency(remainingIncome)}`
-    : `${translate('overBudget')}: ${formatCurrency(-remainingIncome)}`;
+  if (template === 'Free') {
+    // For Free Allocation, show categories without targets
+    const fixedDisplay = `${translate('fixedMonthlyCosts')}: ${formatCurrency(fixedTotal)}`;
+    const variableDisplay = `${translate('variableExpenses')}: ${formatCurrency(variableTotal)}`;
+    const savingsDisplay = `${translate('savings')}: ${formatCurrency(savingsTotal)}`;
+    const remainingDisplay = remainingIncome >= 0
+      ? `${translate('remainingIncome')}: ${formatCurrency(remainingIncome)}`
+      : `${translate('overBudget')}: ${formatCurrency(-remainingIncome)}`;
 
-  document.getElementById('remaining-income').innerHTML = remainingDisplay;
-  document.getElementById('remaining-income').className = remainingIncome < 0 ? 'warning' : '';
+    document.getElementById('fixed-monthly-costs').innerHTML = fixedDisplay;
+    document.getElementById('variable-expenses').innerHTML = variableDisplay;
+    document.getElementById('savings').innerHTML = savingsDisplay;
+    document.getElementById('remaining-income').innerHTML = remainingDisplay;
+    document.getElementById('remaining-income').className = remainingIncome < 0 ? 'warning' : '';
+  } else {
+    // Calculate budget targets for 50/30/20 or 70/20/10
+    let targets;
+    if (template === '50/30/20') {
+      targets = {
+        fixed: income * 0.5,
+        variable: income * 0.3,
+        savings: income * 0.2
+      };
+    } else {
+      targets = {
+        fixed: income * 0.7,
+        variable: income * 0.1,
+        savings: income * 0.2
+      };
+    }
+
+    // Calculate overspending
+    const fixedExcess = fixedTotal > targets.fixed ? fixedTotal - targets.fixed : 0;
+    const variableExcess = variableTotal > targets.variable ? variableTotal - targets.variable : 0;
+    const savingsExcess = savingsTotal > targets.savings ? savingsTotal - targets.savings : 0;
+
+    // Build display with warning
+    const fixedDisplay = `${translate('fixedMonthlyCosts')}: ${formatCurrency(fixedTotal)} (${fixedTotal} ${translate('of')} ${formatCurrency(targets.fixed)})${fixedExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(fixedExcess)}` : ''}`;
+    const variableDisplay = `${translate('variableExpenses')}: ${formatCurrency(variableTotal)} (${variableTotal} ${translate('of')} ${formatCurrency(targets.variable)})${variableExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(variableExcess)}` : ''}`;
+    const savingsDisplay = `${translate('savings')}: ${formatCurrency(savingsTotal)} (${savingsTotal} ${translate('of')} ${formatCurrency(targets.savings)})${savingsExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(savingsExcess)}` : ''}`;
+
+    document.getElementById('fixed-monthly-costs').innerHTML = fixedDisplay;
+    document.getElementById('variable-expenses').innerHTML = variableDisplay;
+    document.getElementById('savings').innerHTML = savingsDisplay;
+
+    // Display remaining income or deficit
+    const remainingDisplay = remainingIncome >= 0
+      ? `${translate('remainingIncome')}: ${formatCurrency(remainingIncome)}`
+      : `${translate('overBudget')}: ${formatCurrency(-remainingIncome)}`;
+
+    document.getElementById('remaining-income').innerHTML = remainingDisplay;
+    document.getElementById('remaining-income').className = remainingIncome < 0 ? 'warning' : '';
+  }
 }
