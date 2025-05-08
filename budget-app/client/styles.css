@@ -129,6 +129,10 @@ input[type="text"] {
   min-width: 200px;
 }
 
+.expense-form-section input[type="text"].swedish {
+  min-width: 190px;
+}
+
 button {
   background-color: #3B82F6;
   color: #FFFFFF;

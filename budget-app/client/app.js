@@ -154,6 +154,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Update language and UI text
 function updateLanguage() {
   language = currency === 'SEK' ? 'sv' : 'en';
+  const descriptionInput = document.getElementById('description');
+  if (language === 'sv') {
+    descriptionInput.classList.add('swedish');
+  } else {
+    descriptionInput.classList.remove('swedish');
+  }
   document.getElementById('app-title').innerText = translate('appTitle');
   document.getElementById('app-header').innerText = translate('appHeader');
   document.getElementById('currency-label').innerText = translate('currencyLabel');
