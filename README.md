@@ -38,6 +38,7 @@ A simple web application that lets users manage finances with customizable budge
 ## 📸 Screenshots
 
 ![Budget App Screenshot](./budget-app/screenshots/budgetapp.PNG)
+![Budget App Screenshot](./budget-app/screenshots/budgetappENG.PNG)
 
 
   
