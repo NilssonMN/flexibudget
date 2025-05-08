@@ -6,8 +6,8 @@ A simple web application that lets users manage finances with customizable budge
 
 ## 🌟 Features
 
-- Track income and expenses with a sleek, retro-inspired interface
-- Choose from 50/30/20, 70/20/10, or Free Allocation budget templates
+- Track income and expenses
+- Choose from 50/30/20 , 70/20/10, or Free Allocation budget templates
 - See real-time budget breakdowns and remaining income
 - Add, edit, or delete expenses in an interactive table
 - Save and load budget snapshots for easy tracking
@@ -37,7 +37,8 @@ A simple web application that lets users manage finances with customizable budge
 
 ## 📸 Screenshots
 
-![Budget App Screenshot](./screenshots/budgetapp.PNG)
+![Budget App Screenshot](./budget-app/screenshots/budgetapp.PNG)
+
 
   
 
