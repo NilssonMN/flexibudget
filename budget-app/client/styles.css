@@ -3,8 +3,7 @@ body {
   margin: 0;
   padding: 0;
   background: linear-gradient(120deg, #0D1117 60%, #18213a 100%);
-  color: #E6EDF3; /* Adjusted default text color for new background */
-  padding-top: 24px;
+  color: #E6EDF3; 
 }
 
 main {
@@ -55,17 +54,11 @@ h2 {
   margin-bottom: 16px;
   color: #FFFFFF;
 }
-
 .controls-row,
 .income-display,
 .budget-overview-section,
 .expense-form-section {
-  /* REMOVED card styles from individual sections, parent .main-content-column is the card now */
-  /* background-color: #161B22; */
-  padding: 0; /* Remove individual padding, rely on parent's padding and gap, or set specific internal padding if needed */
-  /* border-radius: 12px; */
-  /* margin-bottom: 24px; */ /* Replaced by gap on parent */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
+  padding: 0; 
 }
 
 .currency-section, .template-section, .income-section {
@@ -275,21 +268,21 @@ h2 {
 }
 
 input, select, button {
-  padding: 12px 16px; /* Slightly increased padding for better touch/click targets */
-  font-size: 15px; /* Slightly increased base font size for inputs */
-  border: 1px solid #30363D; /* Subtler border color */
-  border-radius: 8px; /* Softer, more modern radius */
-  background-color: #0D1117; /* Match body or a very dark input background */
-  color: #E6EDF3; /* Light text */
+  padding: 12px 16px; 
+  font-size: 15px; 
+  border: 1px solid #30363D; 
+  border-radius: 8px; 
+  background-color: #0D1117; 
+  color: #E6EDF3;
   font-family: 'Inter', sans-serif;
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
 input:focus, select:focus {
   outline: none;
-  border-color: #2F81F7; /* Modern blue for focus */
-  background-color: #161B22; /* Slightly lighter background on focus */
-  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.3); /* Diffused focus shadow */
+  border-color: #2F81F7; 
+  background-color: #161B22; 
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.3); 
 }
 
 input[type="number"], select {
@@ -306,47 +299,44 @@ input[type="text"] {
 }
 
 button {
-  background-color: #238636; /* Modern GitHub green for primary actions */
+  background-color: #238636; 
   color: #FFFFFF;
-  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
+  border: 1px solid rgba(240, 246, 252, 0.1); 
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
-  padding: 10px 20px; /* Adjusted padding for buttons */
+  padding: 10px 20px; 
   font-weight: 500;
 }
 
 button:hover {
-  background-color: #2EA043; /* Lighter green on hover */
+  background-color: #2EA043; 
   border-color: rgba(240, 246, 252, 0.15);
 }
-
 .delete-btn, .load-btn, .delete-snapshot-btn {
-  /* background-color: #EF4444; Will be overridden for load-btn */
-  /* color: #FFFFFF; */
-  padding: 8px 16px; /* Adjusted padding */
-  white-space: nowrap; /* Prevent text wrapping */
+  padding: 8px 16px; 
+  white-space: nowrap; 
   font-size: 14px;
 }
 
-/* Specific button types */
+
 .delete-btn, .delete-snapshot-btn {
-    background-color: #DA3633; /* GitHub-style danger red */
+    background-color: #DA3633;
     color: #FFFFFF;
     border-color: rgba(240, 246, 252, 0.1);
 }
 .delete-btn:hover, .delete-snapshot-btn:hover {
-    background-color: #F85149; /* Lighter danger red on hover */
+    background-color: #F85149; 
     border-color: rgba(240, 246, 252, 0.15);
 }
 
 .load-btn {
-  background-color: #2F81F7; /* Modern blue for secondary/load actions */
+  background-color: #2F81F7; 
   color: #FFFFFF;
   border-color: rgba(240, 246, 252, 0.1);
 }
 
 .load-btn:hover {
-  background-color: #58A6FF; /* Lighter blue on hover */
+  background-color: #58A6FF; 
   border-color: rgba(240, 246, 252, 0.15);
 }
 
@@ -393,18 +383,17 @@ th {
   font-weight: 500;
 }
 
-/* Specific styles for #expense-table to make it look smaller and cleaner */
+
 #expense-table th {
-  padding: 8px 12px; /* Reduced padding */
-  font-size: 14px;   /* Consistent font size for headers */
-  /* It will inherit background-color, color, font-weight from the global th rule */
-  /* It will also inherit text-align, border-bottom, word-break from global th, td rule */
+  padding: 8px 12px; 
+  font-size: 14px;   
+
 }
 
 #expense-table td {
-  padding: 8px 12px; /* Reduced padding */
-  font-size: 14px;   /* Consistent font size for cells */
-  /* It will inherit text-align, color, border-bottom, word-break from global th, td rule */
+  padding: 8px 12px;
+  font-size: 14px;  
+ 
 }
 
 #snapshot-table {
@@ -431,15 +420,6 @@ th {
   font-weight: 500;
 }
 
-/* Make table headers sticky within the scrollable expense-list-section */
-/* Removing sticky headers as the parent section will no longer scroll independently */
-/*
-#expense-table thead th {
-  position: sticky;
-  top: 0;
-  z-index: 1; 
-}
-*/
 
 #exit-snapshot-btn {
   display: none;
