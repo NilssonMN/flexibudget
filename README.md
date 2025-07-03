@@ -4,7 +4,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Flexible Budget Templates:** Choose from 50/30/20, 70/20/10, or create your own custom allocation
 - **Real-Time Budget Insights:** Instantly see your budget breakdown, category limits, and remaining income
@@ -16,7 +16,7 @@ A modern, flexible web application for managing your personal finances with cust
 ---
 
 
-## 🚀 How to Use
+## How to Use
 
 1. **Enter your monthly income** and select your preferred currency (SEK, USD, or EUR)
 2. **Pick a budget plan** (50/30/20, 70/20/10, or Custom Allocation) to match your financial style
@@ -25,7 +25,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript (Vanilla)
 - **Backend:** Node.js, Express.js
@@ -33,7 +33,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ![FlexiBudget Swedish](./budget-app/screenshots/budgetapp.PNG)
 ![FlexiBudget English](./budget-app/screenshots/budgetappENG.PNG)
