@@ -27,7 +27,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ## Tech Stack
 
-- **Frontend:** HTML, CSS, JavaScript (Vanilla)
+- **Frontend:** HTML, CSS, JavaScript
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB
 
