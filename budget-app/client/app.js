@@ -151,20 +151,42 @@ function formatCurrency(amount) {
 // Replace all API calls to use the deployed backend
 const API_BASE_URL = 'https://flexibudget-c039.onrender.com';
 
+async function pingBackend() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/`);
+    if (!response.ok) throw new Error();
+    localMode = false;
+    showLocalModeBanner(false);
+  } catch (err) {
+    localMode = true;
+    showLocalModeBanner(true);
+  }
+}
+
 // Load data on page load
+// Now ping backend first, then fetch data if online
+
 document.addEventListener('DOMContentLoaded', async () => {
+  await pingBackend();
   updateLanguage();
   document.getElementById('currency').value = currency;
   document.getElementById('budget-template').value = template;
-  await fetchExpenses();
-  await fetchIncome();
-  await fetchSnapshots();
-  // Save main budget after initial data load
+  if (!localMode) {
+    await fetchExpenses();
+    await fetchIncome();
+    await fetchSnapshots();
+  } else {
+    expenses = [];
+    income = 0;
+    updateExpenseList();
+    updateBudgetOverview();
+    updateIncomeDisplay();
+    updateSnapshotList();
+  }
   saveMainBudget();
   initialDataLoaded = true;
   document.getElementById('income').addEventListener('input', updateIncome);
   document.getElementById('save-snapshot-button').addEventListener('click', saveSnapshot);
-  // Attach exit snapshot button event
   const btn = document.getElementById('exit-snapshot-btn');
   if (btn) {
     btn.addEventListener('click', () => {
@@ -339,23 +361,25 @@ async function saveSnapshot() {
 
 // Fetch snapshots
 async function fetchSnapshots() {
+  if (localMode) {
+    snapshots = [];
+    updateSnapshotList();
+    return;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots?user=${user}`);
-    console.log('Fetch snapshots response status:', response.status);
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Fetch snapshots error:', response.status, text);
-      throw new Error(`Failed to fetch snapshots: ${response.status} ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error();
     snapshots = await response.json();
-    console.log('Fetched snapshots:', snapshots);
     updateSnapshotList();
     hasShownSnapshotLoadError = false;
   } catch (err) {
-    console.error('Error fetching snapshots:', err);
-    if (!hasShownSnapshotLoadError) {
+    if (!hasShownSnapshotLoadError && !localMode) {
       alert(translate('failedLoadSnapshots'));
       hasShownSnapshotLoadError = true;
+    }
+    if (localMode) {
+      snapshots = [];
+      updateSnapshotList();
     }
   }
 }
@@ -493,6 +517,7 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
 
 // Fetch expenses
 async function fetchExpenses() {
+  if (localMode) return;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
     if (!response.ok) throw new Error();
@@ -514,6 +539,7 @@ async function fetchExpenses() {
 
 // Fetch income
 async function fetchIncome() {
+  if (localMode) return;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
     if (!response.ok) throw new Error();
