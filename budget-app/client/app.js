@@ -9,6 +9,7 @@ const user = 'Nilsson';
 let mainBudget = null; 
 let activeSnapshot = null;
 let initialDataLoaded = false; 
+let hasShownSnapshotLoadError = false;
 
 // Translations
 const translations = {
@@ -336,9 +337,13 @@ async function fetchSnapshots() {
     snapshots = await response.json();
     console.log('Fetched snapshots:', snapshots);
     updateSnapshotList();
+    hasShownSnapshotLoadError = false;
   } catch (err) {
     console.error('Error fetching snapshots:', err);
-    alert(translate('failedLoadSnapshots'));
+    if (!hasShownSnapshotLoadError) {
+      alert(translate('failedLoadSnapshots'));
+      hasShownSnapshotLoadError = true;
+    }
   }
 }
 
