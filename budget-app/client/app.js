@@ -600,7 +600,6 @@ function updateBudgetOverview() {
     remainingRow = `<div id=\"remaining-income\" class=\"budget-row${remainingIncome < 0 ? ' warning' : ''}\"><span class=\"icon\">🧮</span><span class=\"label\">${remainingIncome >= 0 ? translate('remainingIncome') : translate('overBudget')}</span><span class=\"value\">${formatCurrency(Math.abs(remainingIncome))}</span></div>`;
   }
 
-  // Render: remaining income at the top, then the three columns
   const budgetOverview = document.querySelector('.budget-overview-section');
   if (budgetOverview) {
     budgetOverview.innerHTML = `
