@@ -6,6 +6,9 @@ let language = currency === 'SEK' ? 'sv' : 'en';
 let snapshots = [];
 let template = localStorage.getItem('budgetTemplate') || '50/30/20';
 const user = 'Nilsson';
+let mainBudget = null; 
+let activeSnapshot = null;
+let initialDataLoaded = false; 
 
 // Translations
 const translations = {
@@ -147,8 +150,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   await fetchExpenses();
   await fetchIncome();
   await fetchSnapshots();
+  // Save main budget after initial data load
+  saveMainBudget();
+  initialDataLoaded = true;
   document.getElementById('income').addEventListener('input', updateIncome);
   document.getElementById('save-snapshot-button').addEventListener('click', saveSnapshot);
+  // Attach exit snapshot button event
+  const btn = document.getElementById('exit-snapshot-btn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      if (mainBudget) {
+        income = mainBudget.income;
+        expenses = JSON.parse(JSON.stringify(mainBudget.expenses));
+        template = mainBudget.template;
+        document.getElementById('income').value = income || '';
+        document.getElementById('budget-template').value = template;
+        updateExpenseList();
+        updateBudgetOverview();
+        updateIncomeDisplay();
+        activeSnapshot = null;
+        showExitSnapshotButton(false);
+      }
+    });
+  }
 });
 
 // Update language and UI text
@@ -324,6 +348,13 @@ async function loadSnapshot(id) {
     }
     const snapshot = await response.json();
     console.log('Loading snapshot:', snapshot);
+
+    // --- Save main budget before loading snapshot ---
+    if (!activeSnapshot && initialDataLoaded) {
+      saveMainBudget();
+    }
+    activeSnapshot = true;
+    showExitSnapshotButton(true);
 
     income = snapshot.income;
     document.getElementById('income').value = income || '';
@@ -536,22 +567,13 @@ function updateBudgetOverview() {
   const totalExpenses = fixedTotal + variableTotal + savingsTotal;
   const remainingIncome = income - totalExpenses;
 
+  let fixedRow, variableRow, savingsRow, remainingRow;
   if (template === 'Free') {
-    // For Free Allocation, show categories without targets
-    const fixedDisplay = `${translate('fixedMonthlyCosts')}: ${formatCurrency(fixedTotal)}`;
-    const variableDisplay = `${translate('variableExpenses')}: ${formatCurrency(variableTotal)}`;
-    const savingsDisplay = `${translate('savings')}: ${formatCurrency(savingsTotal)}`;
-    const remainingDisplay = remainingIncome >= 0
-      ? `${translate('remainingIncome')}: ${formatCurrency(remainingIncome)}`
-      : `${translate('overBudget')}: ${formatCurrency(-remainingIncome)}`;
-
-    document.getElementById('fixed-monthly-costs').innerHTML = fixedDisplay;
-    document.getElementById('variable-expenses').innerHTML = variableDisplay;
-    document.getElementById('savings').innerHTML = savingsDisplay;
-    document.getElementById('remaining-income').innerHTML = remainingDisplay;
-    document.getElementById('remaining-income').className = remainingIncome < 0 ? 'warning' : '';
+    fixedRow = `<div class=\"budget-row\"><span class=\"icon\">🏠</span><span class=\"label\">${translate('fixedMonthlyCosts')}</span><span class=\"value\">${formatCurrency(fixedTotal)}</span></div>`;
+    variableRow = `<div class=\"budget-row\"><span class=\"icon\">🎉</span><span class=\"label\">${translate('variableExpenses')}</span><span class=\"value\">${formatCurrency(variableTotal)}</span></div>`;
+    savingsRow = `<div class=\"budget-row\"><span class=\"icon\">💰</span><span class=\"label\">${translate('savings')}</span><span class=\"value\">${formatCurrency(savingsTotal)}</span></div>`;
+    remainingRow = `<div id=\"remaining-income\" class=\"budget-row${remainingIncome < 0 ? ' warning' : ''}\"><span class=\"icon\">🧮</span><span class=\"label\">${remainingIncome >= 0 ? translate('remainingIncome') : translate('overBudget')}</span><span class=\"value\">${formatCurrency(Math.abs(remainingIncome))}</span></div>`;
   } else {
-    // Calculate budget targets for 50/30/20 or 70/20/10
     let targets;
     if (template === '50/30/20') {
       targets = {
@@ -566,27 +588,41 @@ function updateBudgetOverview() {
         savings: income * 0.2
       };
     }
-
-    // Calculate overspending
     const fixedExcess = fixedTotal > targets.fixed ? fixedTotal - targets.fixed : 0;
     const variableExcess = variableTotal > targets.variable ? variableTotal - targets.variable : 0;
     const savingsExcess = savingsTotal > targets.savings ? savingsTotal - targets.savings : 0;
-
-    // Build display with warning
-    const fixedDisplay = `${translate('fixedMonthlyCosts')}: ${formatCurrency(fixedTotal)} (${fixedTotal} ${translate('of')} ${formatCurrency(targets.fixed)})${fixedExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(fixedExcess)}` : ''}`;
-    const variableDisplay = `${translate('variableExpenses')}: ${formatCurrency(variableTotal)} (${variableTotal} ${translate('of')} ${formatCurrency(targets.variable)})${variableExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(variableExcess)}` : ''}`;
-    const savingsDisplay = `${translate('savings')}: ${formatCurrency(savingsTotal)} (${savingsTotal} ${translate('of')} ${formatCurrency(targets.savings)})${savingsExcess > 0 ? ` ${translate('exceedsLimitBy')} ${formatCurrency(savingsExcess)}` : ''}`;
-
-    document.getElementById('fixed-monthly-costs').innerHTML = fixedDisplay;
-    document.getElementById('variable-expenses').innerHTML = variableDisplay;
-    document.getElementById('savings').innerHTML = savingsDisplay;
-
-    // Display remaining income or deficit
-    const remainingDisplay = remainingIncome >= 0
-      ? `${translate('remainingIncome')}: ${formatCurrency(remainingIncome)}`
-      : `${translate('overBudget')}: ${formatCurrency(-remainingIncome)}`;
-
-    document.getElementById('remaining-income').innerHTML = remainingDisplay;
-    document.getElementById('remaining-income').className = remainingIncome < 0 ? 'warning' : '';
+    fixedRow = `<div class=\"budget-row\"><span class=\"icon\">🏠</span><span class=\"label\">${translate('fixedMonthlyCosts')}</span><span class=\"value\">${formatCurrency(fixedTotal)}<span>(${fixedTotal} ${translate('of')} ${formatCurrency(targets.fixed)})${fixedExcess > 0 ? ` <span style='color:#F87171;'>${translate('exceedsLimitBy')} ${formatCurrency(fixedExcess)}</span>` : ''}</span></span></div>`;
+    variableRow = `<div class=\"budget-row\"><span class=\"icon\">🎉</span><span class=\"label\">${translate('variableExpenses')}</span><span class=\"value\">${formatCurrency(variableTotal)}<span>(${variableTotal} ${translate('of')} ${formatCurrency(targets.variable)})${variableExcess > 0 ? ` <span style='color:#F87171;'>${translate('exceedsLimitBy')} ${formatCurrency(variableExcess)}</span>` : ''}</span></span></div>`;
+    savingsRow = `<div class=\"budget-row\"><span class=\"icon\">💰</span><span class=\"label\">${translate('savings')}</span><span class=\"value\">${formatCurrency(savingsTotal)}<span>(${savingsTotal} ${translate('of')} ${formatCurrency(targets.savings)})${savingsExcess > 0 ? ` <span style='color:#F87171;'>${translate('exceedsLimitBy')} ${formatCurrency(savingsExcess)}</span>` : ''}</span></span></div>`;
+    remainingRow = `<div id=\"remaining-income\" class=\"budget-row${remainingIncome < 0 ? ' warning' : ''}\"><span class=\"icon\">🧮</span><span class=\"label\">${remainingIncome >= 0 ? translate('remainingIncome') : translate('overBudget')}</span><span class=\"value\">${formatCurrency(Math.abs(remainingIncome))}</span></div>`;
   }
+
+  // Render: remaining income at the top, then the three columns
+  const budgetOverview = document.querySelector('.budget-overview-section');
+  if (budgetOverview) {
+    budgetOverview.innerHTML = `
+      <h2 id=\"budget-header\">${translate('budgetHeader')}</h2>
+      ${remainingRow}
+      <div class=\"budget-cols\">
+        ${fixedRow}
+        ${variableRow}
+        ${savingsRow}
+      </div>
+    `;
+  }
+}
+
+//  main budget function 
+function saveMainBudget() {
+  mainBudget = {
+    income,
+    expenses: JSON.parse(JSON.stringify(expenses)),
+    template
+  };
+}
+
+// Show/hide exit snapshot button 
+function showExitSnapshotButton(show) {
+  const btn = document.getElementById('exit-snapshot-btn');
+  if (btn) btn.style.display = show ? 'block' : 'none';
 }

@@ -2,12 +2,39 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #111827;
-  color: #FFFFFF;
+  background: linear-gradient(120deg, #0D1117 60%, #18213a 100%);
+  color: #E6EDF3; /* Adjusted default text color for new background */
+  padding-top: 24px;
 }
 
 main {
+  margin-left: 300px;
   margin-right: 400px;
+  padding: 0;
+  max-width: calc(100% - 300px - 400px);
+  box-sizing: border-box;
+}
+
+.main-content-column {
+  max-width: 850px;
+  margin: 10px auto 0 auto;
+  background: transparent;
+  padding: 28px 32px 24px 32px;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 2px 8px rgba(20, 20, 30, 0.08);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: relative;
+}
+
+.main-content-column h1, .main-content-column h2 {
+  font-weight: 700;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  color: #E6EDF3;
+  letter-spacing: 0.01em;
 }
 
 .header {
@@ -29,12 +56,16 @@ h2 {
   color: #FFFFFF;
 }
 
-.controls-row {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  padding: 16px;
-  flex-wrap: wrap;
+.controls-row,
+.income-display,
+.budget-overview-section,
+.expense-form-section {
+  /* REMOVED card styles from individual sections, parent .main-content-column is the card now */
+  /* background-color: #161B22; */
+  padding: 0; /* Remove individual padding, rely on parent's padding and gap, or set specific internal padding if needed */
+  /* border-radius: 12px; */
+  /* margin-bottom: 24px; */ /* Replaced by gap on parent */
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); */
 }
 
 .currency-section, .template-section, .income-section {
@@ -43,9 +74,17 @@ h2 {
   gap: 8px;
 }
 
+.controls-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 6px 0 6px 0;
+}
+
 .income-display {
   text-align: center;
-  padding: 16px;
+  padding: 6px 0 6px 0;
 }
 
 #income-display {
@@ -54,35 +93,178 @@ h2 {
   color: #FFFFFF;
 }
 
-.expense-form-section, .budget-overview-section {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 16px;
+.expense-form-section {
+  padding: 6px 0 6px 0;
+}
+
+.budget-overview-section {
+  text-align: center;
+  padding: 28px 18px 18px 18px;
+  background: linear-gradient(135deg, #1A222C 80%, #222B36 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(20, 20, 30, 0.13);
+  margin-bottom: 10px;
+  margin-top: 4px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+  border-left: 5px solid #3B82F6;
+  display: block;
+}
+
+#budget-header {
+  margin-bottom: 28px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #3B82F6;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(20, 20, 30, 0.10);
+  text-align: center;
+}
+
+.budget-cols {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 0;
+  align-items: stretch;
+}
+
+.budget-row {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 110px;
+  flex: 1 1 0;
+  position: relative;
+  background: #222B36;
+  border-radius: 10px;
+  padding: 22px 18px 16px 18px;
+  box-shadow: 0 1px 4px rgba(20, 20, 30, 0.07);
+  font-size: 19px;
+  font-weight: 500;
+  color: #E6EDF3;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.budget-row .icon {
+  font-size: 28px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.budget-row .label {
+  text-align: left;
+  font-weight: 500;
+  color: #A5B4FC;
+  margin: 0 0 2px 0;
+  word-break: break-word;
+  line-height: 1.2;
+  max-width: 90%;
+  align-self: flex-start;
+  flex: 1 1 auto;
+  overflow-wrap: break-word;
+}
+.budget-row .value {
+  font-weight: 700;
+  font-size: 20px;
+  text-align: left;
+  color: #fff;
+  margin-left: 0;
+  margin-top: 0;
+  align-self: flex-end;
+  flex-shrink: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+.budget-row .value span {
+  display: block;
+  font-weight: 400;
+  font-size: 15px;
+  color: #A5B4FC;
+}
+#remaining-income.budget-row {
+  background: #1F2937;
+  color: #FFFFFF;
+  font-weight: 700;
+  margin-bottom: 18px;
+  border-left: 4px solid #3B82F6;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 54px;
+  padding: 18px 22px;
+  font-size: 22px;
+}
+#remaining-income.budget-row .icon {
+  margin-bottom: 0;
+  margin-right: 16px;
+  font-size: 28px;
+}
+#remaining-income.budget-row .label {
+  margin-bottom: 0;
+  color: #A5B4FC;
+  font-size: 20px;
+}
+#remaining-income.budget-row .value {
+  margin-left: auto;
+  font-size: 22px;
+}
+#remaining-income.budget-row.warning {
+  color: #F87171;
+  background: #2D1A1A;
+  border-left: 4px solid #F87171;
 }
 
 .snapshot-wrapper {
+  position: fixed;
+  left: 0;
+  top: 24px;
+  width: 300px;
+  height: calc(100vh - 48px);
+  overflow-y: auto;
+  z-index: 10;
+  background: transparent;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 2px 8px rgba(20, 20, 30, 0.08);
+  padding: 28px 24px 24px 24px;
   display: flex;
-  gap: 24px;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .save-snapshot-section, .snapshot-list-section {
-  max-width: 350px;
-  flex: 1;
-  min-width: 300px;
+  max-width: 100%;
+  flex: 0;
+  min-width: auto;
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.save-snapshot-section h2, .snapshot-list-section h2 {
+  margin-top: 0;
 }
 
 .expense-list-section {
-  position: absolute;
-  right: 10%;
-  top: 120px;
-  max-width: 450px;
-  padding: 16px;
-  margin: 0 auto;
+  position: fixed;
+  right: 0;
+  top: 24px;
+  width: 400px;
+  overflow-x: hidden;
+  z-index: 10;
+  background: transparent;
+  border-radius: 0 16px 16px 0;
+  box-shadow: 0 2px 8px rgba(20, 20, 30, 0.08);
+  padding: 28px 24px 24px 24px;
+}
+
+.snapshot-wrapper > section,
+.expense-list-section > h2,
+.expense-list-section > table {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .expense-form-section form {
@@ -92,32 +274,22 @@ h2 {
   justify-content: center;
 }
 
-.budget-overview-section {
-  text-align: center;
-}
-
-.save-snapshot-section {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
 input, select, button {
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #4B5563;
-  border-radius: 6px;
-  background-color: #374151;
-  color: #FFFFFF;
+  padding: 12px 16px; /* Slightly increased padding for better touch/click targets */
+  font-size: 15px; /* Slightly increased base font size for inputs */
+  border: 1px solid #30363D; /* Subtler border color */
+  border-radius: 8px; /* Softer, more modern radius */
+  background-color: #0D1117; /* Match body or a very dark input background */
+  color: #E6EDF3; /* Light text */
   font-family: 'Inter', sans-serif;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
 input:focus, select:focus {
   outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: #2F81F7; /* Modern blue for focus */
+  background-color: #161B22; /* Slightly lighter background on focus */
+  box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.3); /* Diffused focus shadow */
 }
 
 input[type="number"], select {
@@ -134,32 +306,48 @@ input[type="text"] {
 }
 
 button {
-  background-color: #3B82F6;
+  background-color: #238636; /* Modern GitHub green for primary actions */
   color: #FFFFFF;
-  border: none;
+  border: 1px solid rgba(240, 246, 252, 0.1); /* Subtle border */
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
+  padding: 10px 20px; /* Adjusted padding for buttons */
+  font-weight: 500;
 }
 
 button:hover {
-  background-color: #2563EB;
+  background-color: #2EA043; /* Lighter green on hover */
+  border-color: rgba(240, 246, 252, 0.15);
 }
 
 .delete-btn, .load-btn, .delete-snapshot-btn {
-  background-color: #6B7280;
-  padding: 6px 10px;
+  /* background-color: #EF4444; Will be overridden for load-btn */
+  /* color: #FFFFFF; */
+  padding: 8px 16px; /* Adjusted padding */
+  white-space: nowrap; /* Prevent text wrapping */
+  font-size: 14px;
 }
 
+/* Specific button types */
+.delete-btn, .delete-snapshot-btn {
+    background-color: #DA3633; /* GitHub-style danger red */
+    color: #FFFFFF;
+    border-color: rgba(240, 246, 252, 0.1);
+}
 .delete-btn:hover, .delete-snapshot-btn:hover {
-  background-color: #4B5563;
+    background-color: #F85149; /* Lighter danger red on hover */
+    border-color: rgba(240, 246, 252, 0.15);
 }
 
 .load-btn {
-  background-color: #3B82F6;
+  background-color: #2F81F7; /* Modern blue for secondary/load actions */
+  color: #FFFFFF;
+  border-color: rgba(240, 246, 252, 0.1);
 }
 
 .load-btn:hover {
-  background-color: #2563EB;
+  background-color: #58A6FF; /* Lighter blue on hover */
+  border-color: rgba(240, 246, 252, 0.15);
 }
 
 #budget-overview div {
@@ -184,21 +372,39 @@ button:hover {
   width: 100%;
   background-color: #1F2937;
   border-collapse: collapse;
-  border: 1px solid #4B5563;
-  border-radius: 6px;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
 }
 
 th, td {
-  padding: 10px;
+  padding: 14px 16px;
   text-align: left;
-  color: #FFFFFF;
-  border-bottom: 1px solid #4B5563;
+  color: #E5E7EB;
+  border-bottom: 1px solid #374151;
+  word-break: break-word;
 }
 
 th {
   background-color: #3B82F6;
   color: #FFFFFF;
   font-weight: 500;
+}
+
+/* Specific styles for #expense-table to make it look smaller and cleaner */
+#expense-table th {
+  padding: 8px 12px; /* Reduced padding */
+  font-size: 14px;   /* Consistent font size for headers */
+  /* It will inherit background-color, color, font-weight from the global th rule */
+  /* It will also inherit text-align, border-bottom, word-break from global th, td rule */
+}
+
+#expense-table td {
+  padding: 8px 12px; /* Reduced padding */
+  font-size: 14px;   /* Consistent font size for cells */
+  /* It will inherit text-align, color, border-bottom, word-break from global th, td rule */
 }
 
 #snapshot-table {
@@ -225,9 +431,101 @@ th {
   font-weight: 500;
 }
 
+/* Make table headers sticky within the scrollable expense-list-section */
+/* Removing sticky headers as the parent section will no longer scroll independently */
+/*
+#expense-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1; 
+}
+*/
+
+#exit-snapshot-btn {
+  display: none;
+  height: 32px;
+  padding: 0 18px;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: #238636;
+  color: #FFFFFF;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition: background-color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+}
+#exit-snapshot-btn:hover {
+  background-color: #2EA043;
+  border-color: rgba(240, 246, 252, 0.15);
+}
+
+#save-snapshot-button {
+  height: 46px;
+  min-width: 54px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 0 32px;
+  background-color: #238636;
+  color: #fff;
+  border: 1.5px solid rgba(240, 246, 252, 0.13);
+  box-shadow: 0 2px 8px rgba(20, 80, 40, 0.10);
+  margin-top: 10px;
+  margin-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, box-shadow 0.18s, border-color 0.18s;
+}
+#save-snapshot-button:hover {
+  background-color: #2EA043;
+  box-shadow: 0 4px 16px rgba(20, 80, 40, 0.13);
+  border-color: rgba(240, 246, 252, 0.18);
+}
+
+@media (max-width: 1280px) {
+  main {
+    margin-left: 24px;
+    margin-right: 24px;
+    max-width: 100%;
+    padding-top: 0;
+  }
+
+  .snapshot-wrapper, .expense-list-section {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 24px auto;
+    max-width: 700px;
+    z-index: auto;
+    padding: 0;
+  }
+
+  .snapshot-wrapper > section,
+  .expense-list-section > h2,
+  .expense-list-section > table {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .expense-list-section {
+    max-width: 800px;
+  }
+
+  body {
+    padding-top: 0;
+  }
+}
+
 @media (max-width: 600px) {
   main {
     margin-right: 0;
+    margin-left: 0;
+    padding: 0 16px;
   }
 
   .controls-row {
@@ -269,5 +567,24 @@ th {
   .expense-form-section form, .save-snapshot-section {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 700px) {
+  .budget-overview-section {
+    max-width: 98vw;
+    padding: 12px 2vw 12px 2vw;
+  }
+  .budget-cols {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .budget-row {
+    min-height: 0;
+    padding: 14px 10px 10px 10px;
+  }
+  #remaining-income.budget-row {
+    font-size: 18px;
+    padding: 12px 12px;
   }
 }
