@@ -13,8 +13,8 @@ let initialDataLoaded = false;
 // Translations
 const translations = {
   en: {
-    appTitle: '50/30/20 Budget App',
-    appHeader: '50/30/20 Budget App',
+    appTitle: 'FlexiBudget',
+    appHeader: 'FlexiBudget',
     currencyLabel: 'Currency',
     currencyUSD: 'Dollars ($)',
     currencyEUR: 'Euro (€)',
@@ -64,11 +64,12 @@ const translations = {
     of: 'of',
     exceedsLimitBy: 'exceeds limit by',
     remainingIncome: 'Remaining income',
-    overBudget: 'Over budget'
+    overBudget: 'Over budget',
+    backToMyBudget: 'Back to Menu'
   },
   sv: {
-    appTitle: '50/30/20 Budgetapp',
-    appHeader: '50/30/20 Budgetapp',
+    appTitle: 'FlexiBudget',
+    appHeader: 'FlexiBudget',
     currencyLabel: 'Valuta',
     currencyUSD: 'Dollar ($)',
     currencyEUR: 'Euro (€)',
@@ -118,7 +119,8 @@ const translations = {
     of: 'av',
     exceedsLimitBy: 'överskrider gränsen med',
     remainingIncome: 'Återstående inkomst',
-    overBudget: 'Över budget'
+    overBudget: 'Över budget',
+    backToMyBudget: 'Tillbaka till meny'
   },
 };
 
@@ -215,6 +217,7 @@ function updateLanguage() {
   updateExpenseList();
   updateBudgetOverview();
   updateSnapshotList();
+  document.getElementById('exit-snapshot-btn').innerText = translate('backToMyBudget');
 }
 
 // Update currency
