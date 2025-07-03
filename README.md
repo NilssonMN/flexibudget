@@ -12,7 +12,6 @@ A modern, flexible web application for managing your personal finances with cust
 - **Expense Tracking:** Add, edit, and delete expenses in an interactive, user-friendly table
 - **Snapshot System:** Save and load budget snapshots to track your progress or compare different months
 - **Multi-Currency & Language:** Supports SEK, USD, EUR and both Swedish & English for a global experience
-- **Modern, Responsive UI:** Clean, intuitive design that works beautifully on desktop and mobile
 
 ---
 
