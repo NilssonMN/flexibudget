@@ -10,6 +10,7 @@ let mainBudget = null;
 let activeSnapshot = null;
 let initialDataLoaded = false; 
 let hasShownSnapshotLoadError = false;
+let localMode = false;
 
 // Translations
 const translations = {
@@ -257,6 +258,11 @@ async function updateIncome() {
 
   income = parseFloat(incomeInput);
   console.log('Sending income:', income);
+  if (localMode) {
+    updateBudgetOverview();
+    updateIncomeDisplay();
+    return;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses/income`, {
       method: 'POST',
@@ -294,6 +300,11 @@ async function saveSnapshot() {
     return;
   }
 
+  if (localMode) {
+    alert(language === 'sv' ? 'Kan inte spara budget i offline-läge.' : 'Cannot save budget in offline mode.');
+    return;
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots`, {
       method: 'POST',
@@ -317,7 +328,7 @@ async function saveSnapshot() {
     snapshots.push(newSnapshot);
     updateSnapshotList();
     document.getElementById('snapshot-name').value = '';
-    alert('Budget sparad!');
+    alert(language === 'sv' ? 'Budget sparad!' : 'Budget saved!');
   } catch (err) {
     console.error('Error saving snapshot:', err);
     alert(`${translate('failedSaveSnapshot')}: ${err.message}`);
@@ -446,6 +457,14 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
     return;
   }
 
+  if (localMode) {
+    expenses.push({ _id: Date.now().toString(), amount, category, description });
+    updateExpenseList();
+    updateBudgetOverview();
+    document.getElementById('expense-form').reset();
+    return;
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`, {
       method: 'POST',
@@ -472,34 +491,32 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
 
 // Fetch expenses
 async function fetchExpenses() {
+  triedFetchExpenses = true;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
     console.log('Fetch expenses response status:', response.status);
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Fetch expenses error:', response.status, text);
-      throw new Error(`Failed to fetch expenses: ${response.status} ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error();
     expenses = await response.json();
     console.log('Fetched expenses:', expenses);
     updateExpenseList();
     updateBudgetOverview();
+    failedFetchExpenses = false;
   } catch (err) {
-    console.error('Error fetching expenses:', err);
-    alert(translate('failedLoadExpenses'));
+    failedFetchExpenses = true;
+    expenses = [];
+    updateExpenseList();
+    updateBudgetOverview();
   }
+  checkLocalMode();
 }
 
 // Fetch income
 async function fetchIncome() {
+  triedFetchIncome = true;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
     console.log('Fetch income response status:', response.status);
-    if (!response.ok) {
-      const text = await response.text();
-      console.error('Fetch income error:', response.status, text);
-      throw new Error(`Failed to fetch expenses: ${response.status} ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error();
     const data = await response.json();
     const incomeDoc = data.find((doc) => doc.category === 'Income');
     if (!incomeDoc) {
@@ -512,13 +529,14 @@ async function fetchIncome() {
     console.log('Fetched income:', income);
     updateBudgetOverview();
     updateIncomeDisplay();
+    failedFetchIncome = false;
   } catch (err) {
-    console.error('Error fetching income:', err);
-    alert(`${translate('failedLoadIncome')}: ${err.message}`);
+    failedFetchIncome = true;
     income = 0;
     updateBudgetOverview();
     updateIncomeDisplay();
   }
+  checkLocalMode();
 }
 
 // Update expense list
@@ -543,6 +561,12 @@ function updateExpenseList() {
 
 // Delete expense
 async function deleteExpense(id) {
+  if (localMode) {
+    expenses = expenses.filter((exp) => exp._id !== id);
+    updateExpenseList();
+    updateBudgetOverview();
+    return;
+  }
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses/${id}`, {
       method: 'DELETE',
@@ -635,4 +659,45 @@ function saveMainBudget() {
 function showExitSnapshotButton(show) {
   const btn = document.getElementById('exit-snapshot-btn');
   if (btn) btn.style.display = show ? 'block' : 'none';
+}
+
+function showLocalModeBanner(show) {
+  let banner = document.getElementById('local-mode-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'local-mode-banner';
+    banner.style.background = '#F87171';
+    banner.style.color = '#fff';
+    banner.style.padding = '10px 0';
+    banner.style.textAlign = 'center';
+    banner.style.fontWeight = 'bold';
+    banner.style.position = 'fixed';
+    banner.style.top = '0';
+    banner.style.left = '0';
+    banner.style.width = '100%';
+    banner.style.zIndex = '9999';
+    banner.innerText = language === 'sv'
+      ? 'Offline-läge: Data sparas inte och försvinner vid omladdning.'
+      : 'Offline mode: Data is not saved and will disappear on reload.';
+    document.body.appendChild(banner);
+  }
+  banner.style.display = show ? 'block' : 'none';
+}
+
+// Try both fetchExpenses and fetchIncome, if both fail, enable localMode
+let triedFetchExpenses = false;
+let triedFetchIncome = false;
+let failedFetchExpenses = false;
+let failedFetchIncome = false;
+
+function checkLocalMode() {
+  if (triedFetchExpenses && triedFetchIncome) {
+    if (failedFetchExpenses && failedFetchIncome) {
+      localMode = true;
+      showLocalModeBanner(true);
+    } else {
+      localMode = false;
+      showLocalModeBanner(false);
+    }
+  }
 }
