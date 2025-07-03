@@ -11,6 +11,8 @@ let activeSnapshot = null;
 let initialDataLoaded = false; 
 let hasShownSnapshotLoadError = false;
 let localMode = false;
+let hasShownExpensesLoadError = false;
+let hasShownIncomeLoadError = false;
 
 // Translations
 const translations = {
@@ -491,52 +493,47 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
 
 // Fetch expenses
 async function fetchExpenses() {
-  triedFetchExpenses = true;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
-    console.log('Fetch expenses response status:', response.status);
     if (!response.ok) throw new Error();
     expenses = await response.json();
-    console.log('Fetched expenses:', expenses);
     updateExpenseList();
     updateBudgetOverview();
-    failedFetchExpenses = false;
+    hasShownExpensesLoadError = false;
   } catch (err) {
-    failedFetchExpenses = true;
     expenses = [];
     updateExpenseList();
     updateBudgetOverview();
+    enterLocalMode();
+    if (!hasShownExpensesLoadError && !localMode) {
+      alert(translate('failedLoadExpenses'));
+      hasShownExpensesLoadError = true;
+    }
   }
-  checkLocalMode();
 }
 
 // Fetch income
 async function fetchIncome() {
-  triedFetchIncome = true;
   try {
     const response = await fetch(`${API_BASE_URL}/api/expenses`);
-    console.log('Fetch income response status:', response.status);
     if (!response.ok) throw new Error();
     const data = await response.json();
     const incomeDoc = data.find((doc) => doc.category === 'Income');
-    if (!incomeDoc) {
-      console.log('No income document found, setting income to 0');
-      income = 0;
-    } else {
-      income = incomeDoc.income;
-    }
+    income = incomeDoc ? incomeDoc.income : 0;
     document.getElementById('income').value = income || '';
-    console.log('Fetched income:', income);
     updateBudgetOverview();
     updateIncomeDisplay();
-    failedFetchIncome = false;
+    hasShownIncomeLoadError = false;
   } catch (err) {
-    failedFetchIncome = true;
     income = 0;
     updateBudgetOverview();
     updateIncomeDisplay();
+    enterLocalMode();
+    if (!hasShownIncomeLoadError && !localMode) {
+      alert(translate('failedLoadIncome'));
+      hasShownIncomeLoadError = true;
+    }
   }
-  checkLocalMode();
 }
 
 // Update expense list
@@ -684,20 +681,9 @@ function showLocalModeBanner(show) {
   banner.style.display = show ? 'block' : 'none';
 }
 
-// Try both fetchExpenses and fetchIncome, if both fail, enable localMode
-let triedFetchExpenses = false;
-let triedFetchIncome = false;
-let failedFetchExpenses = false;
-let failedFetchIncome = false;
-
-function checkLocalMode() {
-  if (triedFetchExpenses && triedFetchIncome) {
-    if (failedFetchExpenses && failedFetchIncome) {
-      localMode = true;
-      showLocalModeBanner(true);
-    } else {
-      localMode = false;
-      showLocalModeBanner(false);
-    }
+function enterLocalMode() {
+  if (!localMode) {
+    localMode = true;
+    showLocalModeBanner(true);
   }
 }
