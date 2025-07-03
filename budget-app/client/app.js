@@ -144,6 +144,9 @@ function formatCurrency(amount) {
   return `${amount.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencySymbols[currency]}`;
 }
 
+// Replace all API calls to use the deployed backend
+const API_BASE_URL = 'https://flexibudget-c039.onrender.com';
+
 // Load data on page load
 document.addEventListener('DOMContentLoaded', async () => {
   updateLanguage();
@@ -254,7 +257,7 @@ async function updateIncome() {
   income = parseFloat(incomeInput);
   console.log('Sending income:', income);
   try {
-    const response = await fetch('http://localhost:5000/api/expenses/income', {
+    const response = await fetch(`${API_BASE_URL}/api/expenses/income`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ income }),
@@ -291,7 +294,7 @@ async function saveSnapshot() {
   }
 
   try {
-    const response = await fetch('http://localhost:5000/api/expenses/snapshots', {
+    const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -323,7 +326,7 @@ async function saveSnapshot() {
 // Fetch snapshots
 async function fetchSnapshots() {
   try {
-    const response = await fetch(`http://localhost:5000/api/expenses/snapshots?user=${user}`);
+    const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots?user=${user}`);
     console.log('Fetch snapshots response status:', response.status);
     if (!response.ok) {
       const text = await response.text();
@@ -342,7 +345,7 @@ async function fetchSnapshots() {
 // Load snapshot
 async function loadSnapshot(id) {
   try {
-    const response = await fetch(`http://localhost:5000/api/expenses/snapshots/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots/${id}`);
     console.log('Load snapshot response status:', response.status);
     if (!response.ok) {
       const text = await response.text();
@@ -385,7 +388,7 @@ async function loadSnapshot(id) {
 // Delete snapshot
 async function deleteSnapshot(id) {
   try {
-    const response = await fetch(`http://localhost:5000/api/expenses/snapshots/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/expenses/snapshots/${id}`, {
       method: 'DELETE',
     });
     console.log('Delete snapshot response status:', response.status);
@@ -439,7 +442,7 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
   }
 
   try {
-    const response = await fetch('http://localhost:5000/api/expenses', {
+    const response = await fetch(`${API_BASE_URL}/api/expenses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount, category, description }),
@@ -465,7 +468,7 @@ document.getElementById('expense-form').addEventListener('submit', async (e) => 
 // Fetch expenses
 async function fetchExpenses() {
   try {
-    const response = await fetch('http://localhost:5000/api/expenses');
+    const response = await fetch(`${API_BASE_URL}/api/expenses`);
     console.log('Fetch expenses response status:', response.status);
     if (!response.ok) {
       const text = await response.text();
@@ -485,7 +488,7 @@ async function fetchExpenses() {
 // Fetch income
 async function fetchIncome() {
   try {
-    const response = await fetch('http://localhost:5000/api/expenses');
+    const response = await fetch(`${API_BASE_URL}/api/expenses`);
     console.log('Fetch income response status:', response.status);
     if (!response.ok) {
       const text = await response.text();
@@ -536,7 +539,7 @@ function updateExpenseList() {
 // Delete expense
 async function deleteExpense(id) {
   try {
-    const response = await fetch(`http://localhost:5000/api/expenses/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/expenses/${id}`, {
       method: 'DELETE',
     });
     console.log('Delete expense response status:', response.status);
