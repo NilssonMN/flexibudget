@@ -1,0 +1,60 @@
+.expense-list-section {
+  position: fixed;
+  right: 0;
+  top: 24px;
+  width: 413px;
+  overflow-x: hidden;
+  z-index: 10;
+  background: transparent;
+  border-radius: 0 16px 16px 0;
+  box-shadow: 0 2px 8px rgba(20, 20, 30, 0.08);
+  padding: 28px 24px 24px 24px;
+}
+
+#expense-table {
+  width: 100%;
+  background-color: #1F2937;
+  border-collapse: collapse;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  table-layout: fixed;
+}
+
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  color: #E5E7EB;
+  border-bottom: 1px solid #374151;
+  word-break: break-word;
+}
+
+th {
+  background-color: #3B82F6;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+#expense-table th {
+  padding: 8px 12px; 
+  font-size: 14px;   
+}
+
+#expense-table td {
+  padding: 8px 12px;
+  font-size: 14px;  
+}
+
+.delete-btn {
+  padding: 8px 16px; 
+  white-space: nowrap; 
+  font-size: 14px;
+  background-color: #DA3633;
+  color: #FFFFFF;
+  border-color: rgba(240, 246, 252, 0.1);
+}
+.delete-btn:hover {
+  background-color: #F85149; 
+  border-color: rgba(240, 246, 252, 0.15);
+} 

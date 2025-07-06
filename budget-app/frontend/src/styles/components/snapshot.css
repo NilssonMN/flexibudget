@@ -1,0 +1,125 @@
+.snapshot-wrapper {
+  position: fixed;
+  left: 0;
+  top: 24px;
+  width: 300px;
+  height: calc(100vh - 48px);
+  overflow-y: auto;
+  z-index: 10;
+  background: transparent;
+  border-radius: 16px 0 0 16px;
+  box-shadow: 0 2px 8px rgba(20, 20, 30, 0.08);
+  padding: 28px 24px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.save-snapshot-section, .snapshot-list-section {
+  max-width: 100%;
+  flex: 0;
+  min-width: auto;
+  background-color: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.save-snapshot-section h2, .snapshot-list-section h2 {
+  margin-top: 0;
+}
+
+#snapshot-table {
+  width: 100%;
+  background-color: #1F2937;
+  border: 1px solid #4B5563;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+#snapshot-table div {
+  padding: 8px;
+  text-align: left;
+  color: #FFFFFF;
+  border-bottom: 1px solid #4B5563;
+}
+
+#snapshot-table div:last-child {
+  border-bottom: none;
+}
+
+.load-btn, .delete-snapshot-btn {
+  padding: 8px 16px; 
+  white-space: nowrap; 
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.load-btn {
+  background-color: #2F81F7; 
+  color: #FFFFFF;
+  border-color: rgba(240, 246, 252, 0.1);
+}
+.load-btn:hover {
+  background-color: #58A6FF; 
+  border-color: rgba(240, 246, 252, 0.15);
+}
+
+.delete-snapshot-btn {
+  background-color: #DA3633;
+  color: #FFFFFF;
+  border-color: rgba(240, 246, 252, 0.1);
+}
+.delete-snapshot-btn:hover {
+  background-color: #F85149; 
+  border-color: rgba(240, 246, 252, 0.15);
+}
+
+#exit-snapshot-btn {
+  display: none;
+  height: 32px;
+  padding: 0 18px;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: #238636;
+  color: #FFFFFF;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  transition: background-color 0.2s, border-color 0.2s;
+  box-sizing: border-box;
+}
+#exit-snapshot-btn:hover {
+  background-color: #2EA043;
+  border-color: rgba(240, 246, 252, 0.15);
+}
+
+#save-snapshot-button {
+  height: 46px;
+  min-width: 54px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 0 32px;
+  background-color: #238636;
+  color: #fff;
+  border: 1.5px solid rgba(240, 246, 252, 0.13);
+  box-shadow: 0 2px 8px rgba(20, 80, 40, 0.10);
+  margin-top: 10px;
+  margin-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s, box-shadow 0.18s, border-color 0.18s;
+}
+#save-snapshot-button:hover {
+  background-color: #2EA043;
+  box-shadow: 0 4px 16px rgba(20, 80, 40, 0.13);
+  border-color: rgba(240, 246, 252, 0.18);
+} 

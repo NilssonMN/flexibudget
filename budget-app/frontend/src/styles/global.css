@@ -244,7 +244,7 @@ h2 {
   position: fixed;
   right: 0;
   top: 24px;
-  width: 400px;
+  width: 413px;
   overflow-x: hidden;
   z-index: 10;
   background: transparent;
@@ -291,7 +291,7 @@ input[type="number"], select {
 
 input[type="text"] {
   flex: 1;
-  min-width: 200px;
+  min-width: 190px;
 }
 
 .expense-form-section input[type="text"].swedish {
@@ -567,4 +567,15 @@ th {
     font-size: 18px;
     padding: 12px 12px;
   }
+}
+
+.load-btn, .delete-snapshot-btn {
+  width: 77px;
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }

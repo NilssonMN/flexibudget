@@ -1,0 +1,14 @@
+.expense-form-section {
+  padding: 6px 0 6px 0;
+}
+
+.expense-form-section form {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.expense-form-section input[type="text"].swedish {
+  min-width: 190px;
+} 
