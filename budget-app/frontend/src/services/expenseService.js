@@ -1,10 +1,48 @@
 import { collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from './firebase.js';
 
+// Rate limiting variables
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+
 export class ExpenseService {
+  // Validate expense data
+  static validateExpense(expense) {
+    if (!expense.category || typeof expense.category !== 'string') {
+      throw new Error('Category is required and must be a string');
+    }
+    if (!expense.amount || typeof expense.amount !== 'number' || expense.amount <= 0) {
+      throw new Error('Amount is required and must be a positive number');
+    }
+    if (expense.amount > 1000000) {
+      throw new Error('Amount cannot exceed 1,000,000');
+    }
+    if (expense.category.length > 50) {
+      throw new Error('Category name is too long (max 50 characters)');
+    }
+    if (expense.description && expense.description.length > 200) {
+      throw new Error('Description is too long (max 200 characters)');
+    }
+  }
+
+  // Rate limiting check
+  static checkRateLimit() {
+    const now = Date.now();
+    if (now - lastRequestTime < MIN_REQUEST_INTERVAL) {
+      throw new Error('Too many requests. Please wait a moment before trying again.');
+    }
+    lastRequestTime = now;
+  }
+
   // Add a new expense
   static async addExpense(expense) {
     try {
+      // Rate limiting
+      this.checkRateLimit();
+      
+      // Data validation
+      this.validateExpense(expense);
+      
       const docRef = await addDoc(collection(db, 'expenses'), expense);
       return { ...expense, _id: docRef.id };
     } catch (err) {
@@ -32,6 +70,14 @@ export class ExpenseService {
   // Delete an expense
   static async deleteExpense(id) {
     try {
+      // Rate limiting
+      this.checkRateLimit();
+      
+      // Validate ID
+      if (!id || typeof id !== 'string') {
+        throw new Error('Invalid expense ID');
+      }
+      
       await deleteDoc(doc(db, 'expenses', id));
     } catch (err) {
       throw new Error(`Failed to delete expense: ${err.message}`);
@@ -41,6 +87,17 @@ export class ExpenseService {
   // Update income
   static async updateIncome(income) {
     try {
+      // Rate limiting
+      this.checkRateLimit();
+      
+      // Validate income
+      if (typeof income !== 'number' || income < 0) {
+        throw new Error('Income must be a non-negative number');
+      }
+      if (income > 10000000) {
+        throw new Error('Income cannot exceed 10,000,000');
+      }
+      
       await setDoc(doc(db, 'expenses', 'income'), { income, category: 'Income', amount: 0 });
     } catch (err) {
       throw new Error(`Failed to update income: ${err.message}`);

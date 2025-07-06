@@ -6,6 +6,7 @@ import { ExpenseList } from './components/ExpenseList.js';
 import { SnapshotManager } from './components/SnapshotManager.js';
 import { CurrencySelector } from './components/CurrencySelector.js';
 import { translate } from './utils/translations.js';
+import { initializeAuth } from './services/firebase.js';
 
 export class App {
   constructor() {
@@ -45,6 +46,9 @@ export class App {
 
   async init() {
     try {
+      // Initialize Firebase authentication
+      await initializeAuth();
+      
       // Load initial data
       await this.loadInitialData();
       
