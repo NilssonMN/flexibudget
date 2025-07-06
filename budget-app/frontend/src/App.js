@@ -6,7 +6,7 @@ import { ExpenseList } from './components/ExpenseList.js';
 import { SnapshotManager } from './components/SnapshotManager.js';
 import { CurrencySelector } from './components/CurrencySelector.js';
 import { translate } from './utils/translations.js';
-import { initializeAuth } from './services/firebase.js';
+import { initializeAuth, auth } from './services/firebase.js';
 
 export class App {
   constructor() {
@@ -16,8 +16,8 @@ export class App {
     window.currentCurrency = localStorage.getItem('currency') || 'USD';
     window.currentTemplate = localStorage.getItem('budgetTemplate') || '50/30/20';
     
-    // User
-    this.user = 'Nilsson';
+    // User - will be set after authentication
+    this.user = null;
     
     // Initialize components
     this.budgetOverview = new BudgetOverview();
@@ -47,7 +47,13 @@ export class App {
   async init() {
     try {
       // Initialize Firebase authentication
-      await initializeAuth();
+      const user = await initializeAuth();
+      this.user = user.uid; // Set user ID from Firebase auth
+      
+      // Update components with user ID
+      this.snapshotManager.setUser(this.user);
+      this.expenseForm.setUserId(this.user);
+      this.currencySelector.setUserId(this.user);
       
       // Load initial data
       await this.loadInitialData();
@@ -65,10 +71,10 @@ export class App {
 
   async loadInitialData() {
     // Load expenses
-    window.currentExpenses = await ExpenseService.fetchExpenses();
+    window.currentExpenses = await ExpenseService.fetchExpenses(this.user);
     
     // Load income
-    window.currentIncome = await ExpenseService.fetchIncome();
+    window.currentIncome = await ExpenseService.fetchIncome(this.user);
     document.getElementById('income').value = window.currentIncome || '';
     
     // Load snapshots

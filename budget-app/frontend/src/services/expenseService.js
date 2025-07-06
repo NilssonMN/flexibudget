@@ -35,7 +35,7 @@ export class ExpenseService {
   }
 
   // Add a new expense
-  static async addExpense(expense) {
+  static async addExpense(expense, userId) {
     try {
       // Rate limiting
       this.checkRateLimit();
@@ -43,21 +43,24 @@ export class ExpenseService {
       // Data validation
       this.validateExpense(expense);
       
-      const docRef = await addDoc(collection(db, 'expenses'), expense);
-      return { ...expense, _id: docRef.id };
+      // Add user ID to expense
+      const expenseWithUser = { ...expense, userId };
+      
+      const docRef = await addDoc(collection(db, 'expenses'), expenseWithUser);
+      return { ...expenseWithUser, _id: docRef.id };
     } catch (err) {
       throw new Error(`Failed to add expense: ${err.message}`);
     }
   }
 
   // Fetch all expenses
-  static async fetchExpenses() {
+  static async fetchExpenses(userId) {
     try {
       const querySnapshot = await getDocs(collection(db, 'expenses'));
       const expenses = [];
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        if (data.category !== 'Income') {
+        if (data.category !== 'Income' && data.userId === userId) {
           expenses.push({ ...data, _id: docSnap.id });
         }
       });
@@ -85,7 +88,7 @@ export class ExpenseService {
   }
 
   // Update income
-  static async updateIncome(income) {
+  static async updateIncome(income, userId) {
     try {
       // Rate limiting
       this.checkRateLimit();
@@ -98,16 +101,16 @@ export class ExpenseService {
         throw new Error('Income cannot exceed 10,000,000');
       }
       
-      await setDoc(doc(db, 'expenses', 'income'), { income, category: 'Income', amount: 0 });
+      await setDoc(doc(db, 'expenses', `income_${userId}`), { income, category: 'Income', amount: 0, userId });
     } catch (err) {
       throw new Error(`Failed to update income: ${err.message}`);
     }
   }
 
   // Fetch income
-  static async fetchIncome() {
+  static async fetchIncome(userId) {
     try {
-      const docSnap = await getDoc(doc(db, 'expenses', 'income'));
+      const docSnap = await getDoc(doc(db, 'expenses', `income_${userId}`));
       if (docSnap.exists()) {
         const data = docSnap.data();
         return data.income || 0;

@@ -5,7 +5,12 @@ export class ExpenseForm {
   constructor(onExpenseAdded) {
     this.onExpenseAdded = onExpenseAdded;
     this.expenseForm = document.getElementById('expense-form');
+    this.userId = null;
     this.init();
+  }
+
+  setUserId(userId) {
+    this.userId = userId;
   }
 
   init() {
@@ -24,7 +29,10 @@ export class ExpenseForm {
     }
 
     try {
-      const newExpense = await ExpenseService.addExpense({ amount, category, description });
+      if (!this.userId) {
+        throw new Error('User not authenticated');
+      }
+      const newExpense = await ExpenseService.addExpense({ amount, category, description }, this.userId);
       this.onExpenseAdded(newExpense);
       this.expenseForm.reset();
       document.getElementById('category').value = category; // Keep the category selected

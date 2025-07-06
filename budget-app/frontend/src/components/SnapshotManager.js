@@ -14,6 +14,10 @@ export class SnapshotManager {
     this.init();
   }
 
+  setUser(userId) {
+    this.user = userId;
+  }
+
   init() {
     // Set up save snapshot button
     document.getElementById('save-snapshot-button').addEventListener('click', this.saveSnapshot.bind(this));

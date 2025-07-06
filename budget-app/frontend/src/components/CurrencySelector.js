@@ -7,7 +7,12 @@ export class CurrencySelector {
     this.onTemplateChanged = onTemplateChanged;
     this.currency = localStorage.getItem('currency') || 'USD';
     this.template = localStorage.getItem('budgetTemplate') || '50/30/20';
+    this.userId = null;
     this.init();
+  }
+
+  setUserId(userId) {
+    this.userId = userId;
   }
 
   init() {
@@ -55,7 +60,10 @@ export class CurrencySelector {
     window.currentIncome = parseFloat(incomeInput);
     
     try {
-      await ExpenseService.updateIncome(window.currentIncome);
+      if (!this.userId) {
+        throw new Error('User not authenticated');
+      }
+      await ExpenseService.updateIncome(window.currentIncome, this.userId);
       this.onCurrencyChanged(this.currency);
     } catch (err) {
       alert(`${translate('failedIncome', this.currency)}: ${err.message}`);
