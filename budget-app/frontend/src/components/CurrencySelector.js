@@ -22,12 +22,25 @@ export class CurrencySelector {
     // Set up template selector
     document.getElementById('budget-template').addEventListener('change', this.updateTemplate.bind(this));
     
-    // Set up income input
-    document.getElementById('income').addEventListener('input', this.updateIncome.bind(this));
+    // Set up income input with debounce
+    this.incomeTimeout = null;
+    document.getElementById('income').addEventListener('input', this.debouncedUpdateIncome.bind(this));
     
     // Set initial values
     document.getElementById('currency').value = this.currency;
     document.getElementById('budget-template').value = this.template;
+  }
+
+  debouncedUpdateIncome() {
+    // Clear existing timeout
+    if (this.incomeTimeout) {
+      clearTimeout(this.incomeTimeout);
+    }
+    
+    // Set new timeout - only update after user stops typing for 1 second
+    this.incomeTimeout = setTimeout(() => {
+      this.updateIncome();
+    }, 1000);
   }
 
   updateCurrency() {

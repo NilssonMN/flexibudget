@@ -3,7 +3,9 @@ import { db } from './firebase.js';
 
 // Rate limiting variables
 let lastRequestTime = 0;
+let lastIncomeRequestTime = 0;
 const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+const MIN_INCOME_REQUEST_INTERVAL = 500; // 0.5 seconds between income requests
 
 export class ExpenseService {
   // Validate expense data
@@ -90,8 +92,12 @@ export class ExpenseService {
   // Update income
   static async updateIncome(income, userId) {
     try {
-      // Rate limiting
-      this.checkRateLimit();
+      // Rate limiting for income (less strict)
+      const now = Date.now();
+      if (now - lastIncomeRequestTime < MIN_INCOME_REQUEST_INTERVAL) {
+        throw new Error('Too many income updates. Please wait a moment before trying again.');
+      }
+      lastIncomeRequestTime = now;
       
       // Validate income
       if (typeof income !== 'number' || income < 0) {
