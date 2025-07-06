@@ -1,6 +1,6 @@
 # 💸 FlexiBudget
 
-A modern, flexible web application for managing your personal finances with customizable budget plans. FlexiBudget empowers you to take control of your money, visualize your spending, and save smarter no matter your financial goals or style.
+A modern, flexible web application for managing your personal finances with customizable budget plans.
 
 **🌐 Live Demo:** https://flexibudgetproject.netlify.app/
 
