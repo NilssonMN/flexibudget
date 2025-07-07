@@ -1,5 +1,3 @@
-// Currency utility functions migrated to TypeScript
-
 export function formatCurrency(amount: number, currency: string = 'USD'): string {
     const locale = currency === 'SEK' ? 'sv-SE' : 'en-US';
     if (Number.isInteger(amount)) {

@@ -1,5 +1,5 @@
 import { translate } from '../utils/translations.js';
-import { formatCurrency } from '../utils/currency.js';
+import { formatCurrency } from '../utils/currency';
 
 export class BudgetOverview {
   constructor() {
