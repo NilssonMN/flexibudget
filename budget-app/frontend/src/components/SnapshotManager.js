@@ -1,4 +1,4 @@
-import { translate } from '../utils/translations.js';
+import { translate } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
 import { SnapshotService } from '../services/snapshotService.js';
 

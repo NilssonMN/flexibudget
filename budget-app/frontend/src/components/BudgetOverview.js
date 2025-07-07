@@ -1,4 +1,4 @@
-import { translate } from '../utils/translations.js';
+import { translate } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
 
 export class BudgetOverview {

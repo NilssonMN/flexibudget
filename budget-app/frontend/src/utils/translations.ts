@@ -1,5 +1,11 @@
-// Translations
-export const translations = {
+export type Language = 'en' | 'sv';
+export type Currency = 'USD' | 'EUR' | 'SEK';
+
+export interface TranslationKeys {
+  [key: string]: string;
+}
+
+export const translations: Record<Language, TranslationKeys> = {
   en: {
     appTitle: 'FlexiBudget',
     appHeader: 'FlexiBudget',
@@ -109,11 +115,11 @@ export const translations = {
     remainingIncome: 'Återstående inkomst',
     overBudget: 'Över budget',
     backToMyBudget: 'Tillbaka till meny'
-  },
+  }
 };
 
 // Get translated text
-export function translate(key, currency = 'USD') {
-  const lang = currency === 'SEK' ? 'sv' : 'en';
+export function translate(key: string, currency: Currency = 'USD'): string {
+  const lang: Language = currency === 'SEK' ? 'sv' : 'en';
   return translations[lang][key] || key;
 } 

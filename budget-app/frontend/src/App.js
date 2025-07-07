@@ -5,7 +5,7 @@ import { ExpenseForm } from './components/ExpenseForm.js';
 import { ExpenseList } from './components/ExpenseList.js';
 import { SnapshotManager } from './components/SnapshotManager.js';
 import { CurrencySelector } from './components/CurrencySelector.js';
-import { translate } from './utils/translations.js';
+import { translate } from './utils/translations';
 import { initializeAuth, auth } from './services/firebase.js';
 
 export class App {
