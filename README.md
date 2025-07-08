@@ -17,7 +17,6 @@ A modern, flexible web application for managing your personal finances with cust
 
 ---
 
-
 ## How to Use
 
 1. **Visit the app** - No signup required, get started instantly with anonymous authentication
@@ -31,7 +30,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ## Tech Stack
 
-- **Frontend:** HTML, CSS, JavaScript, Vite
+- **Frontend:** HTML, CSS, TypeScript, Vite
 - **Backend:** Firebase Firestore
 - **Authentication:** Firebase Auth
 - **Hosting:** Netlify
