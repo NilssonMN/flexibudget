@@ -1,14 +1,14 @@
 import { ExpenseService } from './services/expenseService';
 
-import { BudgetOverview } from './components/BudgetOverview.js';
+import { BudgetOverview } from './components/BudgetOverview';
 
 import { ExpenseForm } from './components/ExpenseForm';
 
-import { ExpenseList } from './components/ExpenseList.js';
+import { ExpenseList } from './components/ExpenseList';
 
-import { SnapshotManager } from './components/SnapshotManager.js';
+import { SnapshotManager } from './components/SnapshotManager';
 
-import { CurrencySelector } from './components/CurrencySelector.js';
+import { CurrencySelector } from './components/CurrencySelector';
 import { translate } from './utils/translations';
 import { initializeAuth } from './services/firebase';
 

@@ -1,16 +1,26 @@
-import { translate } from '../utils/translations';
+import { translate, Currency } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
 import { ExpenseService } from '../services/expenseService';
 
+export interface Expense {
+  _id: string;
+  amount: number;
+  category: string;
+  description?: string;
+}
+
 export class ExpenseList {
-  constructor(onExpenseDeleted) {
+  onExpenseDeleted: (expenses: Expense[]) => void;
+  expenses: Expense[];
+
+  constructor(onExpenseDeleted: (expenses: Expense[]) => void) {
     this.onExpenseDeleted = onExpenseDeleted;
     this.expenses = [];
   }
 
-  updateExpenseList(expenses, currency) {
+  updateExpenseList(expenses: Expense[], currency: Currency): void {
     this.expenses = expenses;
-    const tableBody = document.getElementById('expense-table-body');
+    const tableBody = document.getElementById('expense-table-body') as HTMLElement;
     tableBody.innerHTML = '';
 
     expenses
@@ -28,7 +38,7 @@ export class ExpenseList {
       });
   }
 
-  async deleteExpense(id) {
+  async deleteExpense(id: string): Promise<void> {
     try {
       await ExpenseService.deleteExpense(id);
       this.expenses = this.expenses.filter((exp) => exp._id !== id);
@@ -38,26 +48,26 @@ export class ExpenseList {
     }
   }
 
-  updateLanguage(currency) {
-    document.getElementById('expenses-header').innerText = translate('expensesHeader', currency);
-    document.getElementById('table-amount').innerText = translate('tableAmount', currency);
-    document.getElementById('table-category').innerText = translate('tableCategory', currency);
-    document.getElementById('table-description').innerText = translate('tableDescription', currency);
-    document.getElementById('table-action').innerText = translate('tableAction', currency);
+  updateLanguage(currency: Currency): void {
+    (document.getElementById('expenses-header') as HTMLElement).innerText = translate('expensesHeader', currency);
+    (document.getElementById('table-amount') as HTMLElement).innerText = translate('tableAmount', currency);
+    (document.getElementById('table-category') as HTMLElement).innerText = translate('tableCategory', currency);
+    (document.getElementById('table-description') as HTMLElement).innerText = translate('tableDescription', currency);
+    (document.getElementById('table-action') as HTMLElement).innerText = translate('tableAction', currency);
     
     // Update delete buttons text
     const deleteButtons = document.querySelectorAll('.delete-btn');
     deleteButtons.forEach(button => {
-      button.innerText = translate('deleteButton', currency);
+      (button as HTMLButtonElement).innerText = translate('deleteButton', currency);
     });
   }
 
   // Make deleteExpense available globally for HTML onclick handlers
-  static initGlobalHandlers() {
-    window.deleteExpense = (id) => {
+  static initGlobalHandlers(): void {
+    (window as any).deleteExpense = (id: string) => {
       // This will be set by the main app
-      if (window.expenseListInstance) {
-        window.expenseListInstance.deleteExpense(id);
+      if ((window as any).expenseListInstance) {
+        (window as any).expenseListInstance.deleteExpense(id);
       }
     };
   }

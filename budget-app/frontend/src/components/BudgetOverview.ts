@@ -1,12 +1,23 @@
-import { translate } from '../utils/translations';
+import { translate, Currency } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
+
+export interface Expense {
+  amount: number;
+  category: string;
+  description?: string;
+}
 
 export class BudgetOverview {
   constructor() {
     this.updateBudgetOverview = this.updateBudgetOverview.bind(this);
   }
 
-  updateBudgetOverview(expenses, income, template, currency) {
+  updateBudgetOverview(
+    expenses: Expense[],
+    income: number,
+    template: string,
+    currency: Currency
+  ): void {
     const fixedTotal = expenses
       .filter((exp) => exp.category === 'Fixed Monthly Costs')
       .reduce((sum, exp) => sum + exp.amount, 0);
@@ -20,7 +31,7 @@ export class BudgetOverview {
     const totalExpenses = fixedTotal + variableTotal + savingsTotal;
     const remainingIncome = income - totalExpenses;
 
-    let fixedRow, variableRow, savingsRow, remainingRow;
+    let fixedRow: string, variableRow: string, savingsRow: string, remainingRow: string;
     
     if (template === 'Free') {
       fixedRow = `<div class="budget-row"><span class="icon">🏠</span><span class="label">${translate('fixedMonthlyCosts', currency)}</span><span class="value">${formatCurrency(fixedTotal, currency)}</span></div>`;
@@ -28,7 +39,7 @@ export class BudgetOverview {
       savingsRow = `<div class="budget-row"><span class="icon">💰</span><span class="label">${translate('savings', currency)}</span><span class="value">${formatCurrency(savingsTotal, currency)}</span></div>`;
       remainingRow = `<div id="remaining-income" class="budget-row${remainingIncome < 0 ? ' warning' : ''}"><span class="icon">🧮</span><span class="label">${remainingIncome >= 0 ? translate('remainingIncome', currency) : translate('overBudget', currency)}</span><span class="value">${formatCurrency(Math.abs(remainingIncome), currency)}</span></div>`;
     } else {
-      let targets;
+      let targets: { fixed: number; variable: number; savings: number };
       if (template === '50/30/20') {
         targets = {
           fixed: income * 0.5,
