@@ -1,4 +1,4 @@
-import { ExpenseService } from './services/expenseService.js';
+import { ExpenseService } from './services/expenseService';
 import { SnapshotService } from './services/snapshotService.js';
 import { BudgetOverview } from './components/BudgetOverview.js';
 import { ExpenseForm } from './components/ExpenseForm.js';

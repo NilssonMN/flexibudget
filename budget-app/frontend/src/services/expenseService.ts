@@ -1,5 +1,16 @@
+// @ts-ignore  temporary solution while i migrate my codebase.
 import { collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from './firebase.js';
+// @ts-ignore  
+import { db } from './firebase';
+
+// Expense type definition
+export interface Expense {
+  category: string;
+  amount: number;
+  description?: string;
+  userId?: string;
+  _id?: string;
+}
 
 // Rate limiting variables
 let lastRequestTime = 0;
@@ -9,7 +20,7 @@ const MIN_INCOME_REQUEST_INTERVAL = 500; // 0.5 seconds between income requests
 
 export class ExpenseService {
   // Validate expense data
-  static validateExpense(expense) {
+  static validateExpense(expense: Expense): void {
     if (!expense.category || typeof expense.category !== 'string') {
       throw new Error('Category is required and must be a string');
     }
@@ -28,7 +39,7 @@ export class ExpenseService {
   }
 
   // Rate limiting check
-  static checkRateLimit() {
+  static checkRateLimit(): void {
     const now = Date.now();
     if (now - lastRequestTime < MIN_REQUEST_INTERVAL) {
       throw new Error('Too many requests. Please wait a moment before trying again.');
@@ -37,60 +48,55 @@ export class ExpenseService {
   }
 
   // Add a new expense
-  static async addExpense(expense, userId) {
+  static async addExpense(expense: Expense, userId: string): Promise<Expense> {
     try {
       // Rate limiting
       this.checkRateLimit();
-      
       // Data validation
       this.validateExpense(expense);
-      
       // Add user ID to expense
-      const expenseWithUser = { ...expense, userId };
-      
+      const expenseWithUser: Expense = { ...expense, userId };
       const docRef = await addDoc(collection(db, 'expenses'), expenseWithUser);
       return { ...expenseWithUser, _id: docRef.id };
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Failed to add expense: ${err.message}`);
     }
   }
 
   // Fetch all expenses
-  static async fetchExpenses(userId) {
+  static async fetchExpenses(userId: string): Promise<Expense[]> {
     try {
       const querySnapshot = await getDocs(collection(db, 'expenses'));
-      const expenses = [];
+      const expenses: Expense[] = [];
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
         if (data.category !== 'Income' && data.userId === userId) {
-          expenses.push({ ...data, _id: docSnap.id });
+          expenses.push({ ...(data as Expense), _id: docSnap.id });
         }
       });
       return expenses;
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Failed to load expenses: ${err.message}`);
     }
   }
 
   // Delete an expense
-  static async deleteExpense(id) {
+  static async deleteExpense(id: string): Promise<void> {
     try {
       // Rate limiting
       this.checkRateLimit();
-      
       // Validate ID
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid expense ID');
       }
-      
       await deleteDoc(doc(db, 'expenses', id));
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Failed to delete expense: ${err.message}`);
     }
   }
 
   // Update income
-  static async updateIncome(income, userId) {
+  static async updateIncome(income: number, userId: string): Promise<void> {
     try {
       // Rate limiting for income (less strict)
       const now = Date.now();
@@ -98,7 +104,6 @@ export class ExpenseService {
         throw new Error('Too many income updates. Please wait a moment before trying again.');
       }
       lastIncomeRequestTime = now;
-      
       // Validate income
       if (typeof income !== 'number' || income < 0) {
         throw new Error('Income must be a non-negative number');
@@ -106,15 +111,14 @@ export class ExpenseService {
       if (income > 10000000) {
         throw new Error('Income cannot exceed 10,000,000');
       }
-      
       await setDoc(doc(db, 'expenses', `income_${userId}`), { income, category: 'Income', amount: 0, userId });
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Failed to update income: ${err.message}`);
     }
   }
 
   // Fetch income
-  static async fetchIncome(userId) {
+  static async fetchIncome(userId: string): Promise<number> {
     try {
       const docSnap = await getDoc(doc(db, 'expenses', `income_${userId}`));
       if (docSnap.exists()) {
@@ -122,7 +126,7 @@ export class ExpenseService {
         return data.income || 0;
       }
       return 0;
-    } catch (err) {
+    } catch (err: any) {
       throw new Error(`Failed to load income: ${err.message}`);
     }
   }

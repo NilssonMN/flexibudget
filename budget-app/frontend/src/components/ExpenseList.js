@@ -1,6 +1,6 @@
 import { translate } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
-import { ExpenseService } from '../services/expenseService.js';
+import { ExpenseService } from '../services/expenseService';
 
 export class ExpenseList {
   constructor(onExpenseDeleted) {

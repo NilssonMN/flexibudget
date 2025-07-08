@@ -1,5 +1,5 @@
 import { translate } from '../utils/translations';
-import { ExpenseService } from '../services/expenseService.js';
+import { ExpenseService } from '../services/expenseService';
 
 export class CurrencySelector {
   constructor(onCurrencyChanged, onTemplateChanged) {
