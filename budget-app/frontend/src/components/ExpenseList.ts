@@ -39,12 +39,16 @@ export class ExpenseList {
   }
 
   async deleteExpense(id: string): Promise<void> {
+    const prevExpenses = [...this.expenses];
+    this.expenses = this.expenses.filter((exp) => exp._id !== id);
+    this.onExpenseDeleted(this.expenses);
+
     try {
       await ExpenseService.deleteExpense(id);
-      this.expenses = this.expenses.filter((exp) => exp._id !== id);
-      this.onExpenseDeleted(this.expenses);
     } catch (err) {
-      alert(translate('failedDelete'));
+      // Rollback: restore the previous state if delete fails
+      this.expenses = prevExpenses;
+      this.onExpenseDeleted(this.expenses);
     }
   }
 

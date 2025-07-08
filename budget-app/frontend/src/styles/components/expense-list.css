@@ -53,6 +53,8 @@ th {
   background-color: #DA3633;
   color: #FFFFFF;
   border-color: rgba(240, 246, 252, 0.1);
+  min-width: 80px;
+  text-align: center;
 }
 .delete-btn:hover {
   background-color: #F85149; 
