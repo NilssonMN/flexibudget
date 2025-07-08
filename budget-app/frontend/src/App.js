@@ -6,7 +6,7 @@ import { ExpenseList } from './components/ExpenseList.js';
 import { SnapshotManager } from './components/SnapshotManager.js';
 import { CurrencySelector } from './components/CurrencySelector.js';
 import { translate } from './utils/translations';
-import { initializeAuth, auth } from './services/firebase.js';
+import { initializeAuth, auth } from './services/firebase';
 
 export class App {
   constructor() {

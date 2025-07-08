@@ -1,10 +1,13 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { getAuth, signInAnonymously, User } from "firebase/auth";
 
-const firebaseConfig = {
+// Firebase API keys are NOT secret.
+// They are required for client-side apps to connect to Firebase.
+// Security is enforced via Firebase security rules, not by hiding these keys.
+// See: https://firebase.google.com/docs/projects/api-keys
+const firebaseConfig: Record<string, string> = {
   apiKey: "AIzaSyD_O0ag4gx0XoIu3H6vkUgaQZ9cu8W7H_0",
   authDomain: "flexibudget-1c39e.firebaseapp.com",
   projectId: "flexibudget-1c39e",
@@ -21,7 +24,7 @@ export const db = getFirestore(app);
 export const auth = getAuth(app);
 
 // Initialize anonymous authentication
-export const initializeAuth = async () => {
+export const initializeAuth = async (): Promise<User> => {
   try {
     const userCredential = await signInAnonymously(auth);
     return userCredential.user;
