@@ -1,4 +1,3 @@
-import { App } from './App.js';
 
 // Import CSS files
 import './styles/global.css';
