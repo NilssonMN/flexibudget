@@ -1,6 +1,6 @@
 import { translate } from '../utils/translations';
 import { formatCurrency } from '../utils/currency';
-import { SnapshotService } from '../services/snapshotService.js';
+import { SnapshotService } from '../services/snapshotService';
 
 export class SnapshotManager {
   constructor(user, onSnapshotLoaded, onExitSnapshot) {

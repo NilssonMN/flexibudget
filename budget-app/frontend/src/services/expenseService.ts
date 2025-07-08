@@ -98,7 +98,7 @@ export class ExpenseService {
   // Update income
   static async updateIncome(income: number, userId: string): Promise<void> {
     try {
-      // Rate limiting for income (less strict)
+      // Rate limiting for income
       const now = Date.now();
       if (now - lastIncomeRequestTime < MIN_INCOME_REQUEST_INTERVAL) {
         throw new Error('Too many income updates. Please wait a moment before trying again.');

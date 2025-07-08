@@ -1,5 +1,5 @@
 import { ExpenseService } from './services/expenseService';
-import { SnapshotService } from './services/snapshotService.js';
+import { SnapshotService } from './services/snapshotService';
 import { BudgetOverview } from './components/BudgetOverview.js';
 import { ExpenseForm } from './components/ExpenseForm.js';
 import { ExpenseList } from './components/ExpenseList.js';
