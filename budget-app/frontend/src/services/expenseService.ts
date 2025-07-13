@@ -19,7 +19,6 @@ const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
 const MIN_INCOME_REQUEST_INTERVAL = 500; // 0.5 seconds between income requests
 
 export class ExpenseService {
-  // Validate expense data
   static validateExpense(expense: Expense): void {
     if (!expense.category || typeof expense.category !== 'string') {
       throw new Error('Category is required and must be a string');
@@ -38,7 +37,6 @@ export class ExpenseService {
     }
   }
 
-  // Rate limiting check
   static checkRateLimit(): void {
     const now = Date.now();
     if (now - lastRequestTime < MIN_REQUEST_INTERVAL) {
@@ -47,14 +45,10 @@ export class ExpenseService {
     lastRequestTime = now;
   }
 
-  // Add a new expense
   static async addExpense(expense: Expense, userId: string): Promise<Expense> {
     try {
-      // Rate limiting
       this.checkRateLimit();
-      // Data validation
       this.validateExpense(expense);
-      // Add user ID to expense
       const expenseWithUser: Expense = { ...expense, userId };
       const docRef = await addDoc(collection(db, 'expenses'), expenseWithUser);
       return { ...expenseWithUser, _id: docRef.id };
@@ -63,7 +57,6 @@ export class ExpenseService {
     }
   }
 
-  // Fetch all expenses
   static async fetchExpenses(userId: string): Promise<Expense[]> {
     try {
       const querySnapshot = await getDocs(collection(db, 'expenses'));
@@ -80,12 +73,9 @@ export class ExpenseService {
     }
   }
 
-  // Delete an expense
   static async deleteExpense(id: string): Promise<void> {
     try {
-      // Rate limiting
       this.checkRateLimit();
-      // Validate ID
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid expense ID');
       }
@@ -95,16 +85,13 @@ export class ExpenseService {
     }
   }
 
-  // Update income
   static async updateIncome(income: number, userId: string): Promise<void> {
     try {
-      // Rate limiting for income
       const now = Date.now();
       if (now - lastIncomeRequestTime < MIN_INCOME_REQUEST_INTERVAL) {
         throw new Error('Too many income updates. Please wait a moment before trying again.');
       }
       lastIncomeRequestTime = now;
-      // Validate income
       if (typeof income !== 'number' || income < 0) {
         throw new Error('Income must be a non-negative number');
       }
@@ -117,7 +104,6 @@ export class ExpenseService {
     }
   }
 
-  // Fetch income
   static async fetchIncome(userId: string): Promise<number> {
     try {
       const docSnap = await getDoc(doc(db, 'expenses', `income_${userId}`));

@@ -16,7 +16,6 @@ let lastSnapshotRequestTime = 0;
 const MIN_SNAPSHOT_REQUEST_INTERVAL = 2000; // 2 seconds between snapshot operations
 
 export class SnapshotService {
-  // Validate snapshot data
   static validateSnapshot(snapshotData: SnapshotData): void {
     if (!snapshotData.user || typeof snapshotData.user !== 'string') {
       throw new Error('User is required and must be a string');
@@ -41,7 +40,6 @@ export class SnapshotService {
     }
   }
 
-  // Rate limiting check for snapshots
   static checkSnapshotRateLimit(): void {
     const now = Date.now();
     if (now - lastSnapshotRequestTime < MIN_SNAPSHOT_REQUEST_INTERVAL) {
@@ -50,12 +48,9 @@ export class SnapshotService {
     lastSnapshotRequestTime = now;
   }
 
-  // Save a new snapshot
   static async saveSnapshot(snapshotData: SnapshotData): Promise<SnapshotData> {
     try {
-      // Rate limiting
       this.checkSnapshotRateLimit();
-      // Data validation
       this.validateSnapshot(snapshotData);
       const docRef = await addDoc(collection(db, 'snapshots'), snapshotData);
       return { ...snapshotData, _id: docRef.id };
@@ -64,7 +59,6 @@ export class SnapshotService {
     }
   }
 
-  // Fetch snapshots for a user
   static async fetchSnapshots(user: string): Promise<SnapshotData[]> {
     try {
       const q = query(collection(db, 'snapshots'), where('user', '==', user));
@@ -80,7 +74,6 @@ export class SnapshotService {
     }
   }
 
-  // Load a specific snapshot
   static async loadSnapshot(id: string): Promise<SnapshotData | undefined> {
     try {
       const docSnap = await getDoc(doc(db, 'snapshots', id));
@@ -93,12 +86,9 @@ export class SnapshotService {
     }
   }
 
-  // Delete a snapshot
   static async deleteSnapshot(id: string): Promise<void> {
     try {
-      // Rate limiting
       this.checkSnapshotRateLimit();
-      // Validate ID
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid snapshot ID');
       }
@@ -108,7 +98,6 @@ export class SnapshotService {
     }
   }
 
-  // Update an existing snapshot
   static async updateSnapshot(id: string, snapshotData: SnapshotData): Promise<void> {
     try {
       this.checkSnapshotRateLimit();

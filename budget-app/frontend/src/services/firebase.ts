@@ -17,13 +17,11 @@ const firebaseConfig: Record<string, string> = {
   measurementId: "G-MJ4TQV8E5F"
 };
 
-// Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 
-// Initialize anonymous authentication
 export const initializeAuth = async (): Promise<User> => {
   try {
     const userCredential = await signInAnonymously(auth);

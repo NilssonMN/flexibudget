@@ -28,12 +28,10 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, currency, onExpense
     try {
       await ExpenseService.deleteExpense(id);
     } catch (err) {
-      // Rollback if delete fails
       onExpenseDeleted(prevExpenses);
     }
   };
 
-  // Main render
   return (
     <section className="expense-list-section">
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>

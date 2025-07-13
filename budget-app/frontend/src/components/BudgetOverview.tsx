@@ -31,7 +31,6 @@ const BudgetOverview: React.FC<BudgetOverviewProps> = ({ expenses, income, templ
     targets = { fixed: income * 0.7, variable: income * 0.1, savings: income * 0.2 };
   }
 
-  // Main render logic
   return (
     <section className="budget-overview-section">
       <h2 id="budget-header">{translate('budgetHeader', currency)}</h2>

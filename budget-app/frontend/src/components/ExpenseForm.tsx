@@ -33,7 +33,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onExpenseAdded, userId, curre
       onExpenseAdded(newExpense);
       setAmount('');
       setDescription('');
-      // Keep category as selected
     } catch (err: any) {
       alert(`${translate('failedExpense', currency)}: ${err.message}`);
     } finally {
@@ -41,7 +40,6 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onExpenseAdded, userId, curre
     }
   };
 
-  // Main render
   return (
     <section className="expense-form-section">
       <form id="expense-form" onSubmit={handleSubmit}>

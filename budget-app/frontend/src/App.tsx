@@ -14,19 +14,7 @@ import './styles/components/expense-list.css';
 import './styles/components/snapshot.css';
 import { SnapshotService } from './services/snapshotService';
 
-declare global {
-  interface Window {
-    currentIncome?: number;
-    currentExpenses?: any[];
-    currentCurrency?: string;
-    currentTemplate?: string;
-    expenseListInstance?: any;
-    snapshotManagerInstance?: any;
-  }
-}
-
 const App: React.FC = () => {
-  // Class instance refs for legacy logic
   const user = useRef<string | null>(null);
 
   // React state for all props
@@ -40,18 +28,11 @@ const App: React.FC = () => {
   const [isEditingSnapshot, setIsEditingSnapshot] = useState(false);
 
   useEffect(() => {
-    window.currentIncome = 0;
-    window.currentExpenses = [];
-    window.currentCurrency = localStorage.getItem('currency') || 'USD';
-    window.currentTemplate = localStorage.getItem('budgetTemplate') || '50/30/20';
-
-    setIncome(window.currentIncome);
-    setExpenses(window.currentExpenses);
-    setTemplate(window.currentTemplate);
-    setCurrency(window.currentCurrency as Currency);
-
+    setIncome(Number(localStorage.getItem('income')) || 0);
+    setExpenses([]);
+    setTemplate(localStorage.getItem('budgetTemplate') || '50/30/20');
+    setCurrency((localStorage.getItem('currency') as Currency) || 'USD');
     init();
-    // eslint-disable-next-line
   }, []);
 
   // App initialization and data loading
@@ -68,46 +49,29 @@ const App: React.FC = () => {
   }
 
   async function loadInitialData() {
-    window.currentExpenses = await ExpenseService.fetchExpenses(user.current!);
-    window.currentIncome = await ExpenseService.fetchIncome(user.current!);
-    setExpenses(Array.isArray(window.currentExpenses) ? window.currentExpenses : []);
-    setIncome(window.currentIncome);
-    setTemplate(window.currentTemplate!);
-    setCurrency(window.currentCurrency as Currency);
-    (document.getElementById('income') as HTMLInputElement).value = String(window.currentIncome ?? '');
+    const fetchedExpenses = await ExpenseService.fetchExpenses(user.current!);
+    const fetchedIncome = await ExpenseService.fetchIncome(user.current!);
+    setExpenses(Array.isArray(fetchedExpenses) ? fetchedExpenses.map(e => ({ ...e, _id: e._id || '' })) : []);
+    setIncome(fetchedIncome);
+    setTemplate(localStorage.getItem('budgetTemplate') || '50/30/20');
+    setCurrency((localStorage.getItem('currency') as Currency) || 'USD');
   }
 
   // UI update and language helpers
   function updateAllUI() {
-    const currencyVal = (window.currentCurrency as string) || 'USD';
-    setExpenses(Array.isArray(window.currentExpenses) ? window.currentExpenses : []);
-    setIncome(window.currentIncome ?? 0);
-    setTemplate(window.currentTemplate || '50/30/20');
+    const currencyVal = (localStorage.getItem('currency') as string) || 'USD';
+    setTemplate(localStorage.getItem('budgetTemplate') || '50/30/20');
     setCurrency(currencyVal as Currency);
     updateLanguage(currencyVal as Currency);
   }
 
-  function updateLanguage(currency: Currency) {
-    (document.getElementById('app-title') as HTMLElement).innerText = translate('appTitle', currency);
-    (document.getElementById('app-header') as HTMLElement).innerText = translate('appHeader', currency);
-  }
+  function updateLanguage(currency: Currency) {}
 
   // Event handlers for app state changes
   function onExpenseAdded(newExpense: any) {
     setExpenses(prev => {
       const updated = [...prev, newExpense];
-      window.currentExpenses = updated;
-      // If editing a snapshot, update backend
-      if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
-        const updatedSnapshot = {
-          ...activeSnapshot,
-          expenses: updated,
-          income,
-          template,
-        };
-        SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
-        setActiveSnapshot(updatedSnapshot);
-      }
+      localStorage.setItem('expenses', JSON.stringify(updated));
       return updated;
     });
     updateAllUI();
@@ -115,8 +79,7 @@ const App: React.FC = () => {
 
   function onExpenseDeleted(updatedExpenses: any[]) {
     setExpenses(updatedExpenses);
-    window.currentExpenses = updatedExpenses;
-    // If editing a snapshot, update backend
+    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
     if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
       const updatedSnapshot = {
         ...activeSnapshot,
@@ -131,9 +94,8 @@ const App: React.FC = () => {
   }
 
   function onCurrencyChanged(currency: string) {
-    window.currentCurrency = currency;
     setCurrency(currency as Currency);
-    // If editing a snapshot, update backend
+    localStorage.setItem('currency', currency);
     if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
       const updatedSnapshot = {
         ...activeSnapshot,
@@ -149,9 +111,8 @@ const App: React.FC = () => {
   }
 
   function onTemplateChanged(template: string) {
-    window.currentTemplate = template;
     setTemplate(template);
-    // If editing a snapshot, update backend
+    localStorage.setItem('budgetTemplate', template);
     if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
       const updatedSnapshot = {
         ...activeSnapshot,
@@ -166,9 +127,7 @@ const App: React.FC = () => {
   }
 
   function onIncomeChanged(newIncome: number) {
-    window.currentIncome = newIncome;
     setIncome(newIncome);
-    // If editing a snapshot, update backend
     if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
       const updatedSnapshot = {
         ...activeSnapshot,
@@ -193,28 +152,20 @@ const App: React.FC = () => {
     setIncome(snapshot.income ?? 0);
     setExpenses(Array.isArray(snapshot.expenses) ? snapshot.expenses : []);
     setTemplate(snapshot.template || '50/30/20');
-    window.currentIncome = snapshot.income ?? 0;
-    window.currentExpenses = Array.isArray(snapshot.expenses) ? snapshot.expenses : [];
-    window.currentTemplate = snapshot.template || '50/30/20';
     setActiveSnapshot(snapshot);
-    setIsEditingSnapshot(false); // Reset edit mode on load
+    setIsEditingSnapshot(false);
     updateAllUI();
   }
 
   function onExitSnapshot() {
-    // Restore main budget if it was saved before entering snapshot
     if (mainBudget) {
       setIncome(mainBudget.income);
       setExpenses(mainBudget.expenses);
       setTemplate(mainBudget.template);
-      window.currentIncome = mainBudget.income;
-      window.currentExpenses = mainBudget.expenses;
-      window.currentTemplate = mainBudget.template;
       setMainBudget(null);
     }
-    // Always clear active snapshot and update UI
     setActiveSnapshot(null);
-    setIsEditingSnapshot(false); // Reset edit mode on exit
+    setIsEditingSnapshot(false);
     updateAllUI();
   }
 
@@ -223,9 +174,10 @@ const App: React.FC = () => {
     <div>
       <main>
         <header className="header">
-          <h1 id="app-header"></h1>
+          <h1>{translate('appHeader', currency)}</h1>
         </header>
         <div className="main-content-column">
+          <span style={{ display: 'none' }}>{translate('appTitle', currency)}</span>
           <CurrencySelector
             currency={currency}
             template={template}

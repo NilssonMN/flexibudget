@@ -73,7 +73,6 @@ const CurrencySelector: React.FC<CurrencySelectorProps> = ({
     }
   };
 
-  // Main render
   return (
     <div className="controls-row">
       <div className="currency-section">
