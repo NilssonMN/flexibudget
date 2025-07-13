@@ -74,3 +74,24 @@ th, #expense-table th {
   background-color: #1D4ED8;
   color: #FFFFFF;
 }
+
+/* Expense List Header Styles */
+.expense-list-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.expense-list-header h2 {
+  margin: 0;
+}
+
+.snapshot-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+

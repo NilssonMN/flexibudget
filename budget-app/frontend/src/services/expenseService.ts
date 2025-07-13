@@ -14,8 +14,8 @@ export interface Expense {
 // Rate limiting variables
 let lastRequestTime = 0;
 let lastIncomeRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
-const MIN_INCOME_REQUEST_INTERVAL = 500; // 0.5 seconds between income requests
+const MIN_REQUEST_INTERVAL = 50; 
+const MIN_INCOME_REQUEST_INTERVAL = 100; 
 
 export class ExpenseService {
   static validateExpense(expense: Expense): void {
@@ -74,7 +74,6 @@ export class ExpenseService {
 
   static async deleteExpense(id: string): Promise<void> {
     try {
-      this.checkRateLimit();
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid expense ID');
       }

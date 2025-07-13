@@ -69,75 +69,29 @@ const App: React.FC = () => {
 
   // Event handlers for app state changes
   function onExpenseAdded(newExpense: any) {
-    setExpenses(prev => {
-      const updated = [...prev, newExpense];
-      localStorage.setItem('expenses', JSON.stringify(updated));
-      return updated;
-    });
+    setExpenses(prev => [...prev, newExpense]);
     updateAllUI();
   }
 
   function onExpenseDeleted(updatedExpenses: any[]) {
     setExpenses(updatedExpenses);
-    localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
-      const updatedSnapshot = {
-        ...activeSnapshot,
-        expenses: updatedExpenses,
-        income,
-        template,
-      };
-      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
-      setActiveSnapshot(updatedSnapshot);
-    }
     updateAllUI();
   }
 
   function onCurrencyChanged(currency: string) {
     setCurrency(currency as Currency);
     localStorage.setItem('currency', currency);
-    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
-      const updatedSnapshot = {
-        ...activeSnapshot,
-        currency,
-        expenses,
-        income,
-        template,
-      };
-      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
-      setActiveSnapshot(updatedSnapshot);
-    }
     updateAllUI();
   }
 
   function onTemplateChanged(template: string) {
     setTemplate(template);
     localStorage.setItem('budgetTemplate', template);
-    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
-      const updatedSnapshot = {
-        ...activeSnapshot,
-        template,
-        expenses,
-        income,
-      };
-      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
-      setActiveSnapshot(updatedSnapshot);
-    }
     updateAllUI();
   }
 
   function onIncomeChanged(newIncome: number) {
     setIncome(newIncome);
-    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
-      const updatedSnapshot = {
-        ...activeSnapshot,
-        income: newIncome,
-        expenses,
-        template,
-      };
-      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
-      setActiveSnapshot(updatedSnapshot);
-    }
     updateAllUI();
   }
 
@@ -167,6 +121,21 @@ const App: React.FC = () => {
     setActiveSnapshot(null);
     setIsEditingSnapshot(false);
     updateAllUI();
+  }
+
+  function onSaveChanges() {
+    if (activeSnapshot && activeSnapshot._id) {
+      const updatedSnapshot = {
+        ...activeSnapshot,
+        expenses,
+        income,
+        template,
+        currency,
+      };
+      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+      setActiveSnapshot(updatedSnapshot);
+      alert('Changes saved successfully!');
+    }
   }
 
   // Main App Layout
@@ -208,12 +177,9 @@ const App: React.FC = () => {
             activeSnapshot={activeSnapshot}
             onExitSnapshot={onExitSnapshot}
             onEditSnapshot={activeSnapshot && !isEditingSnapshot && activeSnapshot._id ? () => setIsEditingSnapshot(true) : undefined}
+            onSaveChanges={isEditingSnapshot ? onSaveChanges : undefined}
           />
-          {activeSnapshot && isEditingSnapshot && (
-            <div style={{ marginBottom: '12px', color: '#2563eb', fontWeight: 500 }}>
-              {translate('editingSnapshotNotice', currency) || 'Editing snapshot. Changes are saved automatically.'}
-            </div>
-          )}
+
           <SnapshotManager
             userId={userId}
             currency={currency}

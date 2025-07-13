@@ -17,9 +17,10 @@ interface ExpenseListProps {
   activeSnapshot?: any;
   onExitSnapshot?: () => void;
   onEditSnapshot?: () => void;
+  onSaveChanges?: () => void;
 }
 
-const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, currency, onExpenseDeleted, activeSnapshot, onExitSnapshot, onEditSnapshot }) => {
+const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, currency, onExpenseDeleted, activeSnapshot, onExitSnapshot, onEditSnapshot, onSaveChanges }) => {
   // Handle delete expense
   const handleDelete = async (id: string) => {
     const prevExpenses = [...expenses];
@@ -34,18 +35,25 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, currency, onExpense
 
   return (
     <section className="expense-list-section">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-        <h2 id="expenses-header" style={{ margin: 0 }}>{translate('expensesHeader', currency)}</h2>
+      <div className="expense-list-header">
+        <h2 id="expenses-header">{translate('expensesHeader', currency)}</h2>
         {activeSnapshot && (
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div className="snapshot-actions">
             {onEditSnapshot && (
               <button
                 id="edit-snapshot-btn"
                 className="snapshot-action-btn"
                 onClick={onEditSnapshot}
-                style={{ height: '36px', minWidth: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500 }}
               >
                 {translate('editThisBudget', currency) || 'Edit this budget'}
+              </button>
+            )}
+            {onSaveChanges && (
+              <button
+                className="snapshot-action-btn"
+                onClick={onSaveChanges}
+              >
+                Save Changes
               </button>
             )}
             {onExitSnapshot && (
@@ -53,7 +61,6 @@ const ExpenseList: React.FC<ExpenseListProps> = ({ expenses, currency, onExpense
                 id="exit-snapshot-btn"
                 className="snapshot-action-btn"
                 onClick={onExitSnapshot}
-                style={{ height: '36px', minWidth: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 500 }}
               >
                 {translate('backToMyBudget', currency)}
               </button>
