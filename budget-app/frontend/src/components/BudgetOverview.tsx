@@ -51,7 +51,7 @@ const BudgetOverview: React.FC<BudgetOverviewProps> = ({ expenses, income, templ
               <span>
                 ({fixedTotal} {translate('of', currency)} {formatCurrency(targets.fixed, currency)})
                 {fixedTotal > targets.fixed && (
-                  <span style={{ color: '#F87171' }}>
+                  <span className="budget-warning-text">
                     {` ${translate('exceedsLimitBy', currency)} ${formatCurrency(fixedTotal - targets.fixed, currency)}`}
                   </span>
                 )}
@@ -68,7 +68,7 @@ const BudgetOverview: React.FC<BudgetOverviewProps> = ({ expenses, income, templ
               <span>
                 ({variableTotal} {translate('of', currency)} {formatCurrency(targets.variable, currency)})
                 {variableTotal > targets.variable && (
-                  <span style={{ color: '#F87171' }}>
+                  <span className="budget-warning-text">
                     {` ${translate('exceedsLimitBy', currency)} ${formatCurrency(variableTotal - targets.variable, currency)}`}
                   </span>
                 )}
@@ -85,7 +85,7 @@ const BudgetOverview: React.FC<BudgetOverviewProps> = ({ expenses, income, templ
               <span>
                 ({savingsTotal} {translate('of', currency)} {formatCurrency(targets.savings, currency)})
                 {savingsTotal > targets.savings && (
-                  <span style={{ color: '#F87171' }}>
+                  <span className="budget-warning-text">
                     {` ${translate('exceedsLimitBy', currency)} ${formatCurrency(savingsTotal - targets.savings, currency)}`}
                   </span>
                 )}

@@ -116,4 +116,8 @@
   color: #F87171;
   background: #2D1A1A;
   border-left: 4px solid #F87171;
+}
+
+.budget-warning-text {
+  color: #F87171;
 } 

@@ -146,7 +146,7 @@ const App: React.FC = () => {
           <h1>{translate('appHeader', currency)}</h1>
         </header>
         <div className="main-content-column">
-          <span style={{ display: 'none' }}>{translate('appTitle', currency)}</span>
+          <span className="sr-only">{translate('appTitle', currency)}</span>
           <CurrencySelector
             currency={currency}
             template={template}
