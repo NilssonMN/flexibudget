@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ExpenseService } from './services/expenseService';
-import { BudgetOverview } from './components/BudgetOverview';
-import { ExpenseForm } from './components/ExpenseForm';
-import { ExpenseList } from './components/ExpenseList';
-import { SnapshotManager } from './components/SnapshotManager';
-import { CurrencySelector } from './components/CurrencySelector';
+import BudgetOverview from './components/BudgetOverview';
+import ExpenseForm from './components/ExpenseForm';
+import ExpenseList, { Expense as ExpenseListExpense } from './components/ExpenseList';
+import CurrencySelector from './components/CurrencySelector';
+import SnapshotManager from './components/SnapshotManager';
 import { translate, Currency } from './utils/translations';
 import { initializeAuth } from './services/firebase';
 import './styles/global.css';
@@ -12,6 +12,7 @@ import './styles/components/budget.css';
 import './styles/components/expense-form.css';
 import './styles/components/expense-list.css';
 import './styles/components/snapshot.css';
+import { SnapshotService } from './services/snapshotService';
 
 declare global {
   interface Window {
@@ -27,11 +28,16 @@ declare global {
 const App: React.FC = () => {
   // Class instance refs for legacy logic
   const user = useRef<string | null>(null);
-  const budgetOverview = useRef<BudgetOverview | null>(null);
-  const expenseForm = useRef<ExpenseForm | null>(null);
-  const expenseList = useRef<ExpenseList | null>(null);
-  const snapshotManager = useRef<SnapshotManager | null>(null);
-  const currencySelector = useRef<CurrencySelector | null>(null);
+
+  // React state for all props
+  const [expenses, setExpenses] = useState<ExpenseListExpense[]>([]);
+  const [income, setIncome] = useState<number>(0);
+  const [template, setTemplate] = useState<string>('50/30/20');
+  const [currency, setCurrency] = useState<Currency>('USD');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [activeSnapshot, setActiveSnapshot] = useState<any | null>(null);
+  const [mainBudget, setMainBudget] = useState<{ income: number; expenses: ExpenseListExpense[]; template: string } | null>(null);
+  const [isEditingSnapshot, setIsEditingSnapshot] = useState(false);
 
   useEffect(() => {
     window.currentIncome = 0;
@@ -39,24 +45,10 @@ const App: React.FC = () => {
     window.currentCurrency = localStorage.getItem('currency') || 'USD';
     window.currentTemplate = localStorage.getItem('budgetTemplate') || '50/30/20';
 
-    budgetOverview.current = new BudgetOverview();
-    expenseForm.current = new ExpenseForm(onExpenseAdded);
-    expenseList.current = new ExpenseList(onExpenseDeleted);
-    snapshotManager.current = new SnapshotManager(
-      user.current,
-      onSnapshotLoaded,
-      onExitSnapshot
-    );
-    currencySelector.current = new CurrencySelector(
-      onCurrencyChanged,
-      onTemplateChanged
-    );
-
-    ExpenseList.initGlobalHandlers();
-    SnapshotManager.initGlobalHandlers();
-
-    window.expenseListInstance = expenseList.current;
-    window.snapshotManagerInstance = snapshotManager.current;
+    setIncome(window.currentIncome);
+    setExpenses(window.currentExpenses);
+    setTemplate(window.currentTemplate);
+    setCurrency(window.currentCurrency as Currency);
 
     init();
     // eslint-disable-next-line
@@ -67,12 +59,9 @@ const App: React.FC = () => {
     try {
       const authUser = await initializeAuth();
       user.current = authUser.uid;
-      snapshotManager.current?.setUser(user.current!);
-      expenseForm.current?.setUserId(user.current!);
-      currencySelector.current?.setUserId(user.current!);
+      setUserId(authUser.uid);
       await loadInitialData();
       updateAllUI();
-      if (snapshotManager.current) snapshotManager.current.initialDataLoaded = true;
     } catch (error) {
       console.error('Failed to initialize app:', error);
     }
@@ -81,64 +70,151 @@ const App: React.FC = () => {
   async function loadInitialData() {
     window.currentExpenses = await ExpenseService.fetchExpenses(user.current!);
     window.currentIncome = await ExpenseService.fetchIncome(user.current!);
+    setExpenses(Array.isArray(window.currentExpenses) ? window.currentExpenses : []);
+    setIncome(window.currentIncome);
+    setTemplate(window.currentTemplate!);
+    setCurrency(window.currentCurrency as Currency);
     (document.getElementById('income') as HTMLInputElement).value = String(window.currentIncome ?? '');
-    await snapshotManager.current?.fetchSnapshots();
   }
 
   // UI update and language helpers
   function updateAllUI() {
-    const currency = (window.currentCurrency as string) || 'USD';
-    updateLanguage(currency as Currency);
-    budgetOverview.current?.updateBudgetOverview(
-      window.currentExpenses ?? [],
-      window.currentIncome ?? 0,
-      window.currentTemplate || '50/30/20',
-      currency as Currency
-    );
-    expenseList.current?.updateExpenseList(window.currentExpenses ?? [], currency as Currency);
-    currencySelector.current?.updateIncomeDisplay(window.currentIncome ?? 0, currency as Currency);
+    const currencyVal = (window.currentCurrency as string) || 'USD';
+    setExpenses(Array.isArray(window.currentExpenses) ? window.currentExpenses : []);
+    setIncome(window.currentIncome ?? 0);
+    setTemplate(window.currentTemplate || '50/30/20');
+    setCurrency(currencyVal as Currency);
+    updateLanguage(currencyVal as Currency);
   }
 
   function updateLanguage(currency: Currency) {
     (document.getElementById('app-title') as HTMLElement).innerText = translate('appTitle', currency);
     (document.getElementById('app-header') as HTMLElement).innerText = translate('appHeader', currency);
-    currencySelector.current?.updateLanguage(currency);
-    expenseForm.current?.updateLanguage(currency);
-    expenseList.current?.updateLanguage(currency);
-    snapshotManager.current?.updateLanguage(currency);
   }
 
   // Event handlers for app state changes
   function onExpenseAdded(newExpense: any) {
-    (window.currentExpenses ?? []).push(newExpense);
+    setExpenses(prev => {
+      const updated = [...prev, newExpense];
+      window.currentExpenses = updated;
+      // If editing a snapshot, update backend
+      if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
+        const updatedSnapshot = {
+          ...activeSnapshot,
+          expenses: updated,
+          income,
+          template,
+        };
+        SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+        setActiveSnapshot(updatedSnapshot);
+      }
+      return updated;
+    });
     updateAllUI();
   }
 
   function onExpenseDeleted(updatedExpenses: any[]) {
-    window.currentExpenses = updatedExpenses ?? [];
+    setExpenses(updatedExpenses);
+    window.currentExpenses = updatedExpenses;
+    // If editing a snapshot, update backend
+    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
+      const updatedSnapshot = {
+        ...activeSnapshot,
+        expenses: updatedExpenses,
+        income,
+        template,
+      };
+      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+      setActiveSnapshot(updatedSnapshot);
+    }
     updateAllUI();
   }
 
   function onCurrencyChanged(currency: string) {
     window.currentCurrency = currency;
+    setCurrency(currency as Currency);
+    // If editing a snapshot, update backend
+    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
+      const updatedSnapshot = {
+        ...activeSnapshot,
+        currency,
+        expenses,
+        income,
+        template,
+      };
+      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+      setActiveSnapshot(updatedSnapshot);
+    }
     updateAllUI();
   }
 
   function onTemplateChanged(template: string) {
     window.currentTemplate = template;
-    budgetOverview.current?.updateBudgetOverview(
-      window.currentExpenses ?? [],
-      window.currentIncome ?? 0,
-      template,
-      (window.currentCurrency as string || 'USD') as Currency
-    );
+    setTemplate(template);
+    // If editing a snapshot, update backend
+    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
+      const updatedSnapshot = {
+        ...activeSnapshot,
+        template,
+        expenses,
+        income,
+      };
+      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+      setActiveSnapshot(updatedSnapshot);
+    }
+    updateAllUI();
   }
 
-  function onSnapshotLoaded() {
+  function onIncomeChanged(newIncome: number) {
+    window.currentIncome = newIncome;
+    setIncome(newIncome);
+    // If editing a snapshot, update backend
+    if (isEditingSnapshot && activeSnapshot && activeSnapshot._id) {
+      const updatedSnapshot = {
+        ...activeSnapshot,
+        income: newIncome,
+        expenses,
+        template,
+      };
+      SnapshotService.updateSnapshot(activeSnapshot._id, updatedSnapshot);
+      setActiveSnapshot(updatedSnapshot);
+    }
+    updateAllUI();
+  }
+
+  function onSnapshotLoaded(snapshot: any) {
+    if (!activeSnapshot) {
+      setMainBudget({
+        income,
+        expenses,
+        template,
+      });
+    }
+    setIncome(snapshot.income ?? 0);
+    setExpenses(Array.isArray(snapshot.expenses) ? snapshot.expenses : []);
+    setTemplate(snapshot.template || '50/30/20');
+    window.currentIncome = snapshot.income ?? 0;
+    window.currentExpenses = Array.isArray(snapshot.expenses) ? snapshot.expenses : [];
+    window.currentTemplate = snapshot.template || '50/30/20';
+    setActiveSnapshot(snapshot);
+    setIsEditingSnapshot(false); // Reset edit mode on load
     updateAllUI();
   }
 
   function onExitSnapshot() {
+    // Restore main budget if it was saved before entering snapshot
+    if (mainBudget) {
+      setIncome(mainBudget.income);
+      setExpenses(mainBudget.expenses);
+      setTemplate(mainBudget.template);
+      window.currentIncome = mainBudget.income;
+      window.currentExpenses = mainBudget.expenses;
+      window.currentTemplate = mainBudget.template;
+      setMainBudget(null);
+    }
+    // Always clear active snapshot and update UI
+    setActiveSnapshot(null);
+    setIsEditingSnapshot(false); // Reset edit mode on exit
     updateAllUI();
   }
 
@@ -150,80 +226,53 @@ const App: React.FC = () => {
           <h1 id="app-header"></h1>
         </header>
         <div className="main-content-column">
-          <div className="controls-row">
-            <div className="currency-section">
-              <label htmlFor="currency" id="currency-label"></label>
-              <select id="currency">
-                <option value="USD" id="currency-usd"></option>
-                <option value="EUR" id="currency-eur"></option>
-                <option value="SEK" id="currency-sek"></option>
-              </select>
-            </div>
-            <div className="template-section">
-              <label htmlFor="budget-template" id="template-label"></label>
-              <select id="budget-template">
-                <option value="50/30/20" id="template-50-30-20"></option>
-                <option value="70/20/10" id="template-70-20-10"></option>
-                <option value="Free" id="template-free"></option>
-              </select>
-            </div>
-            <div className="income-section">
-              <label htmlFor="income" id="income-label"></label>
-              <input type="number" id="income" step="0.01" />
-            </div>
-          </div>
-          <section className="expense-form-section">
-            <form id="expense-form">
-              <select id="category" required>
-                <option value="Fixed Monthly Costs" id="category-fixed-monthly-costs"></option>
-                <option value="Variable Expenses" id="category-variable-expenses"></option>
-                <option value="Savings" id="category-savings"></option>
-              </select>
-              <input type="number" id="amount" required step="0.01" />
-              <input type="text" id="description" />
-              <button type="submit" id="expense-button"></button>
-            </form>
-          </section>
+          <CurrencySelector
+            currency={currency}
+            template={template}
+            income={income}
+            userId={userId}
+            onCurrencyChanged={onCurrencyChanged}
+            onTemplateChanged={onTemplateChanged}
+            onIncomeChanged={onIncomeChanged}
+          />
+          <ExpenseForm
+            onExpenseAdded={onExpenseAdded}
+            userId={userId}
+            currency={currency}
+          />
           <div className="income-display">
             <div id="income-display"></div>
           </div>
-          <section className="budget-overview-section">
-            <h2 id="budget-header"></h2>
-            <div id="fixed-monthly-costs"></div>
-            <div id="variable-expenses"></div>
-            <div id="savings"></div>
-            <div id="remaining-income"></div>
-          </section>
+          <BudgetOverview
+            expenses={expenses}
+            income={income}
+            template={template}
+            currency={currency}
+          />
+          <ExpenseList
+            expenses={expenses as ExpenseListExpense[]}
+            currency={currency}
+            onExpenseDeleted={onExpenseDeleted}
+            activeSnapshot={activeSnapshot}
+            onExitSnapshot={onExitSnapshot}
+            onEditSnapshot={activeSnapshot && !isEditingSnapshot && activeSnapshot._id ? () => setIsEditingSnapshot(true) : undefined}
+          />
+          {activeSnapshot && isEditingSnapshot && (
+            <div style={{ marginBottom: '12px', color: '#2563eb', fontWeight: 500 }}>
+              {translate('editingSnapshotNotice', currency) || 'Editing snapshot. Changes are saved automatically.'}
+            </div>
+          )}
+          <SnapshotManager
+            userId={userId}
+            currency={currency}
+            income={income}
+            expenses={expenses}
+            template={template}
+            onSnapshotLoaded={onSnapshotLoaded}
+            onExitSnapshot={onExitSnapshot}
+          />
         </div>
       </main>
-      <div className="snapshot-wrapper">
-        <section className="save-snapshot-section">
-          <h2 id="save-snapshot-header"></h2>
-          <input type="text" id="snapshot-name" placeholder="Budget Name" />
-          <button id="save-snapshot-button"></button>
-        </section>
-        <section className="snapshot-list-section">
-          <h2 id="snapshot-list-header"></h2>
-          <div id="snapshot-table"></div>
-        </section>
-      </div>
-      <section className="expense-list-section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-          <h2 id="expenses-header" style={{ margin: 0 }}></h2>
-          <button id="exit-snapshot-btn" style={{ display: 'none', height: '32px' }}>Tillbaka till meny</button>
-        </div>
-        <table id="expense-table">
-          <thead>
-            <tr>
-              <th id="table-amount"></th>
-              <th id="table-category"></th>
-              <th id="table-description"></th>
-              <th id="table-action"></th>
-            </tr>
-          </thead>
-          <tbody id="expense-table-body"></tbody>
-        </table>
-      </section>
     </div>
   );
 };

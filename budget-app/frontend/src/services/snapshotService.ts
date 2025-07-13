@@ -1,4 +1,4 @@
-import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where, setDoc } from "firebase/firestore";
 // @ts-ignore
 import { db } from './firebase';
 
@@ -105,6 +105,20 @@ export class SnapshotService {
       await deleteDoc(doc(db, 'snapshots', id));
     } catch (err: any) {
       throw new Error(`Failed to delete snapshot: ${err.message}`);
+    }
+  }
+
+  // Update an existing snapshot
+  static async updateSnapshot(id: string, snapshotData: SnapshotData): Promise<void> {
+    try {
+      this.checkSnapshotRateLimit();
+      this.validateSnapshot(snapshotData);
+      if (!id || typeof id !== 'string') {
+        throw new Error('Invalid snapshot ID');
+      }
+      await setDoc(doc(db, 'snapshots', id), snapshotData);
+    } catch (err: any) {
+      throw new Error(`Failed to update snapshot: ${err.message}`);
     }
   }
 } 

@@ -59,7 +59,9 @@ export const translations: Record<Language, TranslationKeys> = {
     exceedsLimitBy: 'exceeds limit by',
     remainingIncome: 'Remaining income',
     overBudget: 'Over budget',
-    backToMyBudget: 'Back to Menu'
+    backToMyBudget: 'Back to Menu',
+    editThisBudget: 'Edit this budget',
+    editingSnapshotNotice: 'Editing snapshot. Changes are saved automatically.'
   },
   sv: {
     appTitle: 'FlexiBudget',
@@ -114,7 +116,9 @@ export const translations: Record<Language, TranslationKeys> = {
     exceedsLimitBy: 'överskrider gränsen med',
     remainingIncome: 'Återstående inkomst',
     overBudget: 'Över budget',
-    backToMyBudget: 'Tillbaka till meny'
+    backToMyBudget: 'Tillbaka till meny',
+    editThisBudget: 'Redigera denna budget',
+    editingSnapshotNotice: 'Redigerar budget. Ändringar sparas automatiskt.'
   }
 };
 
