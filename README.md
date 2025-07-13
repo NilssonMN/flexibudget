@@ -35,13 +35,6 @@ A modern, flexible web application for managing your personal finances with cust
 - **Authentication:** Firebase Auth
 - **Hosting:** Netlify
 
----
-
-## Screenshots
-
-![FlexiBudget English](./budget-app/screenshots/budgetappENG.PNG)
-![FlexiBudget Swedish](./budget-app/screenshots/budgetapp.PNG)
-
 
   
 
