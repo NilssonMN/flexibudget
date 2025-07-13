@@ -6,14 +6,14 @@ import { getAuth, signInAnonymously, User } from "firebase/auth";
 // They are required for client-side apps to connect to Firebase.
 // Security is enforced via Firebase security rules, not by hiding these keys.
 // See: https://firebase.google.com/docs/projects/api-keys
-const firebaseConfig: Record<string, string> = {
-  apiKey: "AIzaSyD_O0ag4gx0XoIu3H6vkUgaQZ9cu8W7H_0",
-  authDomain: "flexibudget-1c39e.firebaseapp.com",
-  projectId: "flexibudget-1c39e",
-  storageBucket: "flexibudget-1c39e.firebasestorage.app",
-  messagingSenderId: "176253607417",
-  appId: "1:176253607417:web:cd1f8227cb94a755157128",
-  measurementId: "G-MJ4TQV8E5F"
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 export const app = initializeApp(firebaseConfig);
