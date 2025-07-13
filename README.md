@@ -30,7 +30,7 @@ A modern, flexible web application for managing your personal finances with cust
 
 ## Tech Stack
 
-- **Frontend:** HTML, CSS, TypeScript, Vite
+- **Frontend:** React, TypeScript, Vite, CSS
 - **Backend:** Firebase Firestore
 - **Authentication:** Firebase Auth
 - **Hosting:** Netlify
