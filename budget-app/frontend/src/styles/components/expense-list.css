@@ -2,7 +2,7 @@
   position: fixed;
   right: 0;
   top: 24px;
-  width: 413px;
+  width: 418px;
   overflow-x: hidden;
   z-index: 10;
   background: transparent;
@@ -30,10 +30,11 @@ th, td {
   word-break: break-word;
 }
 
-th {
-  background-color: #3B82F6;
+th, #expense-table th {
+  background-color: #1E293B;
   color: #FFFFFF;
-  font-weight: 500;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 
 #expense-table th {
@@ -59,4 +60,17 @@ th {
 .delete-btn:hover {
   background-color: #F85149; 
   border-color: rgba(240, 246, 252, 0.15);
-} 
+}
+
+.load-btn {
+  background-color: #2563EB;
+  color: #FFFFFF;
+  font-weight: 600;
+  border-color: #1E293B;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+}
+
+.load-btn:hover {
+  background-color: #1D4ED8;
+  color: #FFFFFF;
+}

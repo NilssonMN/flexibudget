@@ -43,38 +43,47 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ onExpenseAdded, userId, curre
   return (
     <section className="expense-form-section">
       <form id="expense-form" onSubmit={handleSubmit}>
-        <select
-          id="category"
-          required
-          value={category}
-          onChange={e => setCategory(e.target.value)}
-        >
-          <option value="Fixed Monthly Costs" id="category-fixed-monthly-costs">
-            {translate('categoryFixedMonthlyCosts', currency)}
-          </option>
-          <option value="Variable Expenses" id="category-variable-expenses">
-            {translate('categoryVariableExpenses', currency)}
-          </option>
-          <option value="Savings" id="category-savings">
-            {translate('categorySavings', currency)}
-          </option>
-        </select>
-        <input
-          type="number"
-          id="amount"
-          required
-          step="0.01"
-          placeholder={translate('amountPlaceholder', currency)}
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-        />
-        <input
-          type="text"
-          id="description"
-          placeholder={translate('descriptionPlaceholder', currency)}
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-        />
+        <div>
+          <label htmlFor="category" id="category-label">{translate('categoryLabel', currency)}</label>
+          <select
+            id="category"
+            required
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+          >
+            <option value="Fixed Monthly Costs" id="category-fixed-monthly-costs">
+              {translate('categoryFixedMonthlyCosts', currency)}
+            </option>
+            <option value="Variable Expenses" id="category-variable-expenses">
+              {translate('categoryVariableExpenses', currency)}
+            </option>
+            <option value="Savings" id="category-savings">
+              {translate('categorySavings', currency)}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label htmlFor="amount" id="amount-label">{translate('amountPlaceholder', currency)}</label>
+          <input
+            type="number"
+            id="amount"
+            required
+            step="0.01"
+            placeholder={translate('amountPlaceholder', currency)}
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="description" id="description-label">{translate('descriptionPlaceholder', currency)}</label>
+          <input
+            type="text"
+            id="description"
+            placeholder={translate('descriptionPlaceholder', currency)}
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+        </div>
         <button type="submit" id="expense-button" disabled={loading}>
           {loading ? translate('loading', currency) : translate('expenseButton', currency)}
         </button>

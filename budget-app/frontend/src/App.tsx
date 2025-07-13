@@ -6,7 +6,7 @@ import ExpenseList, { Expense as ExpenseListExpense } from './components/Expense
 import CurrencySelector from './components/CurrencySelector';
 import SnapshotManager from './components/SnapshotManager';
 import { translate, Currency } from './utils/translations';
-import { initializeAuth } from './services/firebase';
+import { initializeAuth, getAnalytics } from './services/firebase';
 import './styles/global.css';
 import './styles/components/budget.css';
 import './styles/components/expense-form.css';

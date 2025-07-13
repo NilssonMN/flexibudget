@@ -146,24 +146,26 @@ const SnapshotManager: React.FC<SnapshotManagerProps> = ({
         <h2 id="snapshot-list-header">{translate('snapshotListHeader', currency)}</h2>
         <div id="snapshot-table">
           {snapshots.map(snapshot => (
-            <div key={snapshot._id} style={{ display: 'flex', gap: '10px', padding: '10px' }}>
-              <span style={{ flex: 1 }}>
+            <div key={snapshot._id} className="snapshot-row">
+              <span className="snapshot-text">
                 {snapshot.name}: {formatCurrency(snapshot.income, currency)} ({snapshot.template || '50/30/20'})
               </span>
-              <button
-                className="load-btn"
-                onClick={() => loadSnapshot(snapshot._id!)}
-                disabled={loading}
-              >
-                {translate('loadButton', currency)}
-              </button>
-              <button
-                className="delete-snapshot-btn"
-                onClick={() => deleteSnapshot(snapshot._id!)}
-                disabled={loading}
-              >
-                {translate('deleteSnapshotButton', currency)}
-              </button>
+              <div className="snapshot-buttons">
+                <button
+                  className="load-btn"
+                  onClick={() => loadSnapshot(snapshot._id!)}
+                  disabled={loading}
+                >
+                  {translate('loadButton', currency)}
+                </button>
+                <button
+                  className="delete-snapshot-btn"
+                  onClick={() => deleteSnapshot(snapshot._id!)}
+                  disabled={loading}
+                >
+                  {translate('deleteSnapshotButton', currency)}
+                </button>
+              </div>
             </div>
           ))}
         </div>

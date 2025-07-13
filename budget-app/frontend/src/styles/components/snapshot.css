@@ -45,6 +45,27 @@
   display: flex;
 }
 
+.snapshot-row {
+  display: flex;
+  gap: 65px;
+  padding: 4px;
+  align-items: center;
+}
+
+.snapshot-text {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.snapshot-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 #snapshot-table div:last-child {
   border-bottom: none;
 }

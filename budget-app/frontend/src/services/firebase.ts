@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, signInAnonymously, User } from "firebase/auth";
 
@@ -18,9 +17,24 @@ const firebaseConfig: Record<string, string> = {
 };
 
 export const app = initializeApp(firebaseConfig);
-export const analytics = getAnalytics(app);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
+
+// Lazy load analytics to reduce initial bundle size
+let analytics: any = null;
+
+export const getAnalytics = async () => {
+  if (!analytics) {
+    try {
+      const { getAnalytics } = await import("firebase/analytics");
+      analytics = getAnalytics(app);
+    } catch (error) {
+      console.warn('Analytics not available:', error);
+      analytics = null;
+    }
+  }
+  return analytics;
+};
 
 export const initializeAuth = async (): Promise<User> => {
   try {

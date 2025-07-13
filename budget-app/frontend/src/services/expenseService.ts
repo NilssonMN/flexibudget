@@ -1,6 +1,5 @@
 // @ts-ignore  temporary solution while i migrate my codebase.
 import { collection, getDocs, addDoc, deleteDoc, doc, setDoc, getDoc } from "firebase/firestore";
-// @ts-ignore  
 import { db } from './firebase';
 
 // Expense type definition

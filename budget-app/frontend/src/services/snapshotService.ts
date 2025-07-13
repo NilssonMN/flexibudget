@@ -1,5 +1,4 @@
 import { collection, getDocs, addDoc, deleteDoc, doc, getDoc, query, where, setDoc } from "firebase/firestore";
-// @ts-ignore
 import { db } from './firebase';
 
 export interface SnapshotData {
